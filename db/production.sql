@@ -1,7 +1,6 @@
-DROP DATABASE IF EXISTS production;
-CREATE DATABASE production;
-
-\c production;
+-- DROP DATABASE IF EXISTS production;
+-- CREATE DATABASE production;
+-- \c production;
 
 CREATE TABLE todos (
   id SERIAL PRIMARY KEY,
