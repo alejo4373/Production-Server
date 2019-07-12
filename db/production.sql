@@ -2,6 +2,7 @@
 -- CREATE DATABASE production;
 -- \c production;
 
+DROP TABLE IF EXISTS todos;
 CREATE TABLE todos (
   id SERIAL PRIMARY KEY,
   text VARCHAR NOT NULL,
@@ -9,17 +10,20 @@ CREATE TABLE todos (
   value INT NOT NULL
 );
 
+DROP TABLE IF EXISTS journal_entries CASCADE;
 CREATE TABLE journal_entries (
   id SERIAL PRIMARY KEY,
   text VARCHAR NOT NULL,
   ts TIMESTAMPTZ DEFAULT NOW() 
 );
 
+DROP TABLE IF EXISTS tags CASCADE;
 CREATE TABLE tags (
   id SERIAL PRIMARY KEY,
   name VARCHAR (25)
 );
 
+DROP TABLE IF EXISTS je_tags;
 CREATE TABLE je_tags (
   id SERIAL PRIMARY KEY,
   je_id INT REFERENCES journal_entries(id),
