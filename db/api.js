@@ -7,6 +7,9 @@ const optionalCol = col => ({
 
 const getAllTodos = () => db.any("SELECT * FROM todos");
 const getTodo = (id) => db.one("SELECT * FROM todos WHERE id=$/id/", { id });
+const createTodo = (todo) => db.one(
+  `INSERT INTO todos(text, value) VALUES($/text/, $/value/) RETURNING *`, todo
+)
 const removeTodo = id => 
   db.one("DELETE FROM todos WHERE id=$/id/ RETURNING *", 
     { id }
@@ -47,6 +50,8 @@ const addJournalEntry = async (entry) => {
   }
 }
 
+const getAllJournalEntries = () => db.any("SELECT * FROM journal_entries");
+
 const createTag = (name) => {
   return db.one('INSERT INTO tags(name) VALUES($1) RETURNING *', name)
 }
@@ -54,8 +59,10 @@ const createTag = (name) => {
 module.exports = {
   getAllTodos,
   getTodo,
+  createTodo, 
   removeTodo,
   updateTodo,
   addJournalEntry,
+  getAllJournalEntries,
   createTag 
 };
