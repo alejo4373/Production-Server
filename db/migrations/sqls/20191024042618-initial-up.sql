@@ -1,15 +1,3 @@
-DROP DATABASE IF EXISTS production;
-CREATE DATABASE production;
-
-\c production;
-
-CREATE TABLE users (
-  id SERIAL PRIMARY KEY,
-  username VARCHAR UNIQUE NOT NULL, 
-  password_digest VARCHAR,
-  points INT
-);
-
 CREATE TABLE todos (
   id SERIAL PRIMARY KEY,
   owner_id INT REFERENCES users(id),
@@ -27,12 +15,12 @@ CREATE TABLE journal_entries (
 
 CREATE TABLE tags (
   id SERIAL PRIMARY KEY,
-  owner_id INT REFERENCES users(id),
-  name VARCHAR (25)
+  name VARCHAR(25)
 );
 
 CREATE TABLE je_tags (
   id SERIAL PRIMARY KEY,
-  je_id INT REFERENCES journal_entries(id),
-  tag_id INT REFERENCES tags(id)
+  je_id INT REFERENCES journal_entries (id),
+  tag_id INT REFERENCES tags (id)
 );
+

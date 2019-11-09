@@ -5,7 +5,10 @@
   "scripts": {
     "start": "node ./bin/www",
     "start:dev": "nodemon ./bin/www",
-    "heroku-prebuild": "cd client && npm i && npm run build"
+    "heroku-prebuild": "cd client && npm i && npm run build",
+    "dbm:create": "db-migrate create --migrations-dir ./db/migrations",
+    "dbm:up": "db-migrate up --migrations-dir ./db/migrations",
+    "dbm:down": "db-migrate down --migrations-dir ./db/migrations"
   },
   "dependencies": {
     "bcrypt": "^3.0.6",
@@ -21,6 +24,8 @@
     "pg-promise": "^8.7.3"
   },
   "devDependencies": {
+    "db-migrate": "^0.11.6",
+    "db-migrate-pg": "^1.0.0",
     "nodemon": "^1.19.1"
   }
 }
