@@ -1,6 +1,5 @@
 CREATE TABLE todos (
   id SERIAL PRIMARY KEY,
-  owner_id INT REFERENCES users(id),
   text VARCHAR NOT NULL,
   completed BOOLEAN DEFAULT FALSE,
   value INT NOT NULL
@@ -8,7 +7,6 @@ CREATE TABLE todos (
 
 CREATE TABLE journal_entries (
   id SERIAL PRIMARY KEY,
-  owner_id INT REFERENCES users(id),
   text VARCHAR NOT NULL,
   ts TIMESTAMPTZ DEFAULT NOW()
 );
