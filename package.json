@@ -9,7 +9,8 @@
     "dbm:create": "db-migrate create --migrations-dir ./db/migrations",
     "dbm:up": "db-migrate up --migrations-dir ./db/migrations",
     "dbm:down": "db-migrate down --migrations-dir ./db/migrations",
-    "dbm:reset": "db-migrate reset --migrations-dir ./db/migrations"
+    "dbm:reset": "db-migrate reset --migrations-dir ./db/migrations",
+    "test": "jest --watch"
   },
   "dependencies": {
     "bcrypt": "^3.0.6",
@@ -27,6 +28,9 @@
   "devDependencies": {
     "db-migrate": "^0.11.6",
     "db-migrate-pg": "^1.0.0",
-    "nodemon": "^1.19.1"
+    "jest": "^24.9.0",
+    "jest-extended": "^0.11.2",
+    "nodemon": "^1.19.1",
+    "supertest": "^4.0.2"
   }
 }
