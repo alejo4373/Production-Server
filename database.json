@@ -6,7 +6,7 @@
     },
     "password": "",
     "host": "localhost",
-    "database": "production_dev",
+    "database": "production_dev_db",
     "schema": "public"
   },
   "sql-file": true
