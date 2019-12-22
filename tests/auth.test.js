@@ -121,6 +121,31 @@ describe('=== User Authentication ===', () => {
       })
   })
 
-  it('Should prevent the login of a user with the wrong password', () => { })
+  it('Should prevent the login of a user with the wrong password', (done) => {
+    expect.assertions(5)
+
+    const newUser = {
+      username: 'JonDoe',
+      password: 'xyz123'
+    }
+
+    request(app)
+      .post('/api/auth/login')
+      .send(newUser)
+      .end((err, res) => {
+        if (err) throw err
+        const { status, body } = res;
+
+        expect(status).toBe(401)
+        expect(body).toContainAllKeys(RESPONSE_PROPERTIES)
+        expect(body.payload).toBe(null)
+        expect(body.message).toBe("Wrong username or password")
+        expect(body.error).toBe(true)
+
+        done();
+
+      })
+  })
+
   it('Should successfully logout a logged-in user', () => { })
 })
