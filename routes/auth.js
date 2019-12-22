@@ -60,9 +60,9 @@ router.post("/login", (req, res, next) => {
         res.json({
           payload: {
             user: req.user,
-            msg: "Log-in successful",
           },
-          err: false
+          message: "Log-in successful",
+          error: false
         })
       })
     }

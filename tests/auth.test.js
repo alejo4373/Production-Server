@@ -69,4 +69,32 @@ describe('=== User Authentication ===', () => {
         done();
       })
   })
+
+  it('Should allow a registered user to login', (done) => {
+    expect.assertions(5)
+
+    const newUser = {
+      username: 'JonDoe',
+      password: 'abc123'
+    }
+
+    request(app)
+      .post('/api/auth/login')
+      .send(newUser)
+      .end((err, res) => {
+        if (err) throw err
+        const { status, body } = res;
+
+        expect(status).toBe(200)
+        expect(body).toContainAllKeys(RESPONSE_PROPERTIES)
+        expect(body.payload.user).toContainAllKeys(["id", "username", "points"])
+        expect(body.payload.user.username).toBe(newUser.username)
+        expect(body.error).toBe(false)
+
+        done();
+      })
+  })
+
+  it('Should prevent the login of an unregistered user', () => { })
+  it('Should successfully logout a logged-in user', () => { })
 })
