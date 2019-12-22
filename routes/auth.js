@@ -49,10 +49,9 @@ router.post("/login", (req, res, next) => {
     if (err) return next(err)
     if (!user) {
       res.status(401).json({
-        payload: {
-          msg: "Wrong username or password"
-        },
-        err: true
+        payload: null,
+        message: "Wrong username or password",
+        error: true
       })
     } else {
       req.logIn(user, err => {
@@ -72,10 +71,9 @@ router.post("/login", (req, res, next) => {
 router.get('/logout', loginRequired, (req, res) => {
   req.logout();
   res.json({
-    payload: {
-      msg: "Log-out successful"
-    },
-    err: false
+    payload: null,
+    message: "Log-out successful",
+    error: false
   })
 })
 

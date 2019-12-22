@@ -9,7 +9,7 @@ router.get('/all', loginRequired, async (req, res, next) => {
     const todos = await Todos.getAllTodos(user.id);
     res.json({
       payload: todos,
-      err: false
+      error: false
     })
   } catch (err) {
     next(err)
@@ -27,7 +27,7 @@ router.post('/new', loginRequired, async (req, res, next) => {
     const todo = await Todos.createTodo(newTodo);
     res.json({
       payload: todo,
-      err: false
+      error: false
     })
   } catch (err) {
     next(err)
@@ -42,7 +42,7 @@ router.get('/:id', loginRequired, async (req, res, next) => {
     const todo = await Todos.getTodo(id, owner_id);
     res.json({
       payload: todo,
-      err: false
+      error: false
     })
   } catch (err) {
     next(err)
@@ -58,15 +58,15 @@ router.delete('/:id', loginRequired, async (req, res, next) => {
     if (deletedTodo) {
       return res.json({
         payload: deletedTodo,
-        err: false
+        error: false
       })
     }
 
     res.status(404).json({
       payload: {
-        msg: "Todo not found"
+        message: "Todo not found"
       },
-      err: true
+      error: true
     })
   } catch (err) {
     next(err)
@@ -87,15 +87,15 @@ router.patch('/:id', loginRequired, async (req, res, next) => {
       return res.json({
         payload: updatedTodo,
         user: awardedUser,
-        err: false
+        error: false
       })
     }
 
     res.status(404).json({
       payload: {
-        msg: "Todo not found"
+        message: "Todo not found"
       },
-      err: true
+      error: true
     })
   } catch (err) {
     next(err)

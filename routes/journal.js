@@ -13,7 +13,7 @@ router.post('/add', loginRequired, async (req, res, next) => {
     const entry = await Journal.addEntry(newEntry);
     res.json({
       payload: entry,
-      err: false
+      error: false
     })
   } catch (err) {
     next(err);
@@ -26,7 +26,7 @@ router.get('/entries', loginRequired, async (req, res, next) => {
     const entries = await Journal.getAllEntries(owner_id);
     res.json({
       payload: entries,
-      err: false
+      error: false
     })
   } catch (err) {
     next(err);

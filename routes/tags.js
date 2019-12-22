@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { Tags }  = require("../db");
+const { Tags } = require("../db");
 const { loginRequired } = require("../auth/helpers");
 
 router.post('/new', loginRequired, async (req, res, next) => {
@@ -13,7 +13,7 @@ router.post('/new', loginRequired, async (req, res, next) => {
     const tagCreated = await Tags.createTag(newTag);
     res.json({
       payload: tagCreated,
-      err: false
+      error: false
     })
   } catch (err) {
     next(err);

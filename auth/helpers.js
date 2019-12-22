@@ -6,11 +6,11 @@ const genPasswordDigest = async (plainPassword) => {
     return passwordDigest;
   }
   catch (err) {
-    throw(err)
+    throw (err)
   }
 }
 
-const comparePasswords = (plainPassword, passwordDigest) => { 
+const comparePasswords = (plainPassword, passwordDigest) => {
   return bcrypt.compare(plainPassword, passwordDigest)
 }
 
@@ -18,9 +18,9 @@ const loginRequired = (req, res, next) => {
   if (req.user) return next();
   res.status(401).json({
     payload: {
-      msg: "Unauthorized"
+      message: "Unauthorized"
     },
-    err: true
+    error: true
   })
 }
 
