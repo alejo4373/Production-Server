@@ -9,7 +9,7 @@ router.post("/signup", async (req, res, next) => {
   try {
     let user = {
       username,
-      password, 
+      password,
       password_digest: await genPasswordDigest(req.body.password),
       points: 0
     };
@@ -19,23 +19,24 @@ router.post("/signup", async (req, res, next) => {
 
     req.logIn(registeredUser, err => {
       if (err) return next(err)
-      res.json({
-        payload: {
-          user: registeredUser,
-          msg: "User registered and logged in",
-        },
-        err: false
-      })
+      res
+        .status(201)
+        .json({
+          payload: {
+            user: registeredUser,
+          },
+          message: "User registered and logged in",
+          error: false
+        })
     })
 
   } catch (err) {
     // Username already taken 
     if (err.code === "23505" && err.detail.includes("already exists")) {
       res.status(409).json({
-        payload: {
-          msg: "Username not available. Please try a different one."
-        },
-        err: true
+        payload: null,
+        message: "Username not available. Please try a different one.",
+        error: true
       })
     } else {
       next(err);
@@ -43,7 +44,7 @@ router.post("/signup", async (req, res, next) => {
   }
 })
 
-router.post("/login",  (req, res, next) => {
+router.post("/login", (req, res, next) => {
   passport.authenticate('local', (err, user, info) => {
     if (err) return next(err)
     if (!user) {
@@ -53,7 +54,7 @@ router.post("/login",  (req, res, next) => {
         },
         err: true
       })
-    }  else {
+    } else {
       req.logIn(user, err => {
         if (err) return next(err)
         res.json({

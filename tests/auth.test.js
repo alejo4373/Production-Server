@@ -7,7 +7,6 @@ const dbm = DBMigrate.getInstance(true, {
   }
 });
 
-
 beforeAll(async () => {
   try {
     dbm.silence(true);
@@ -18,9 +17,11 @@ beforeAll(async () => {
   }
 })
 
+const RESPONSE_PROPERTIES = ["payload", "message", "error"];
+
 describe('=== User Authentication ===', () => {
-  it('User registration/sign-up successful', (done) => {
-    expect.assertions(2)
+  it('Should register/sign-up a user successfully with starting points set to 0', (done) => {
+    expect.assertions(6)
 
     const newUser = {
       username: 'JonDoe',
@@ -33,18 +34,14 @@ describe('=== User Authentication ===', () => {
       .end((err, res) => {
         if (err) throw err
         const { status, body } = res;
-        expect(status).toBe(200)
-        expect(body).toEqual({
-          "payload": {
-            "user": {
-              "id": 1,
-              "username": "JonDoe",
-              "points": 0
-            },
-            "msg": "User registered and logged in"
-          },
-          "err": false
-        })
+
+        expect(status).toBe(201)
+        expect(body).toContainAllKeys(RESPONSE_PROPERTIES)
+        expect(body.payload.user).toContainAllKeys(["id", "username", "points"])
+        expect(body.payload.user.username).toBe(newUser.username)
+        expect(body.payload.user.points).toBe(0)
+        expect(body.error).toBe(false)
+
         done();
       })
   })
