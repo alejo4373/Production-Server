@@ -7,7 +7,7 @@ const dbm = DBMigrate.getInstance(true, {
   }
 });
 
-beforeAll(async () => {
+const resetDB = async () => {
   try {
     dbm.silence(true);
     await dbm.reset();
@@ -15,7 +15,10 @@ beforeAll(async () => {
   } catch (err) {
     throw err;
   }
-})
+}
+
+beforeAll(resetDB)
+afterAll(resetDB)
 
 const RESPONSE_PROPERTIES = ["payload", "message", "error"];
 
@@ -143,9 +146,39 @@ describe('=== User Authentication ===', () => {
         expect(body.error).toBe(true)
 
         done();
-
       })
   })
 
-  it('Should successfully logout a logged-in user', () => { })
+  it('Should successfully logout a logged-in user', (done) => {
+    expect.assertions(5)
+
+    const newUser = {
+      username: 'JonDoe',
+      password: 'abc123'
+    }
+
+    const reqAgent = request.agent(app) // Needed to keep cookies in node
+
+    reqAgent
+      .post('/api/auth/login')
+      .send(newUser)
+      .end((err, res) => {
+        if (err) throw err
+
+        reqAgent
+          .get('/api/auth/logout')
+          .end((err, res) => {
+            if (err) throw err
+            const { status, body } = res;
+
+            expect(status).toBe(200)
+            expect(body).toContainAllKeys(RESPONSE_PROPERTIES)
+            expect(body.payload).toBe(null)
+            expect(body.message).toMatch(/success/)
+            expect(body.error).toBe(false)
+
+            done();
+          })
+      })
+  })
 })
