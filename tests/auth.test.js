@@ -45,4 +45,28 @@ describe('=== User Authentication ===', () => {
         done();
       })
   })
+
+  it('Should not allow the registration/sign-up of a user with a username already taken', (done) => {
+    expect.assertions(4)
+
+    const newUser = {
+      username: 'JonDoe',
+      password: 'abc123'
+    }
+
+    request(app)
+      .post('/api/auth/signup')
+      .send(newUser)
+      .end((err, res) => {
+        if (err) throw err
+        const { status, body } = res;
+
+        expect(status).toBe(409)
+        expect(body).toContainAllKeys(RESPONSE_PROPERTIES)
+        expect(body.payload).toBe(null)
+        expect(body.error).toBe(true)
+
+        done();
+      })
+  })
 })
