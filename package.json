@@ -10,7 +10,7 @@
     "dbm:up": "db-migrate up --migrations-dir ./db/migrations",
     "dbm:down": "db-migrate down --migrations-dir ./db/migrations",
     "dbm:reset": "db-migrate reset --migrations-dir ./db/migrations",
-    "test": "jest --watch"
+    "test": "jest --runInBand --watch"
   },
   "dependencies": {
     "bcrypt": "^3.0.6",
