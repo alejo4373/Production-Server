@@ -17,36 +17,37 @@ beforeAll(async (done) => {
 
 afterAll(helpers.resetDB)
 
-describe('=== Todos ===', () => {
-  it('Should add a todo', () => {
-    // expect.assertions(1)
-    expect(1).toBe(1);
-    // const testTodo = {
-    //   text: "test todo",
-    //   value: 200
-    // }
+describe('=== /todos route functionality ===', () => {
+  it('Should add a todo', (done) => {
+    expect.assertions(4)
 
-    // reqAgent
-    //   .post('/api/todos/new')
-    //   .send(testTodo)
-    //   .end((err, res) => {
-    //     if (err) {
-    //       console.log('ERROR', err)
-    //       throw err
-    //     }
-    //     const { status, body } = res;
+    const testTodo = {
+      text: "test todo",
+      value: 200
+    }
 
-    //     expect(status).toBe(401)
-    // expect(body).toContainKeys(helpers.RESPONSE_PROPERTIES)
-    // expect(body.payload.todo).toEqual({
-    //   ...testTodo,
-    //   id: 1,
-    //   completed: false,
-    //   owner_id: 1
-    // })
-    // expect(body.error).toBe(false)
+    reqAgent
+      .post('/api/todos/new')
+      .send(testTodo)
+      .end((err, res) => {
+        if (err) {
+          console.log('ERROR', err)
+          throw err
+        }
 
-    // done();
+        const { status, body } = res;
+
+        expect(status).toBe(201)
+        expect(body).toContainKeys(helpers.RESPONSE_PROPERTIES)
+        expect(body.payload.todo).toEqual({
+          ...testTodo,
+          id: 1,
+          completed: false,
+          owner_id: 1
+        })
+        expect(body.error).toBe(false)
+
+        done();
+      })
   })
-
 })
