@@ -25,8 +25,11 @@ router.post('/new', loginRequired, async (req, res, next) => {
 
   try {
     const todo = await Todos.createTodo(newTodo);
-    res.json({
-      payload: todo,
+    res.status(201).json({
+      payload: {
+        todo: todo
+      },
+      message: "New Todo created",
       error: false
     })
   } catch (err) {
