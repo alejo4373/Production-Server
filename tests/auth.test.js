@@ -1,26 +1,11 @@
 const app = require('../app');
 const request = require('supertest')
-const DBMigrate = require('db-migrate')
-const dbm = DBMigrate.getInstance(true, {
-  cmdOptions: {
-    'migrations-dir': './db/migrations' // Relative to test runner root
-  }
-});
+const helpers = require('./helpers')
 
 const reqAgent = request.agent(app) // Needed to keep cookies in node
 
-const resetDB = async () => {
-  try {
-    dbm.silence(true);
-    await dbm.reset();
-    await dbm.up();
-  } catch (err) {
-    throw err;
-  }
-}
-
-beforeAll(resetDB)
-afterAll(resetDB)
+beforeAll(helpers.resetDB)
+afterAll(helpers.resetDB)
 
 const RESPONSE_PROPERTIES = ["payload", "message", "error"];
 
