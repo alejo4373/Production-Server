@@ -7,6 +7,19 @@ const testUser = {
   password: 'abc123'
 }
 
+const testTodo = {
+  text: "test todo",
+  value: 200
+}
+
+const expectedTodo = {
+  ...testTodo,
+  id: 1,
+  completed: false,
+  owner_id: 1
+}
+
+
 const reqAgent = request.agent(app);
 
 beforeAll(async (done) => {
@@ -21,11 +34,6 @@ describe('=== /todos route functionality ===', () => {
   it('Should add a todo', (done) => {
     expect.assertions(4)
 
-    const testTodo = {
-      text: "test todo",
-      value: 200
-    }
-
     reqAgent
       .post('/api/todos/new')
       .send(testTodo)
@@ -39,15 +47,33 @@ describe('=== /todos route functionality ===', () => {
 
         expect(status).toBe(201)
         expect(body).toContainKeys(helpers.RESPONSE_PROPERTIES)
-        expect(body.payload.todo).toEqual({
-          ...testTodo,
-          id: 1,
-          completed: false,
-          owner_id: 1
-        })
+        expect(body.payload.todo).toEqual(expectedTodo)
         expect(body.error).toBe(false)
 
         done();
       })
   })
+
+  it('Should get a todo with id 1', (done) => {
+    expect.assertions(4)
+
+    reqAgent
+      .get('/api/todos/1')
+      .end((err, res) => {
+        if (err) {
+          console.log('ERROR', err)
+          throw err
+        }
+
+        const { status, body } = res;
+
+        expect(status).toBe(200)
+        expect(body).toContainKeys(helpers.RESPONSE_PROPERTIES)
+        expect(body.payload.todo).toEqual(expectedTodo)
+        expect(body.error).toBe(false)
+
+        done();
+      })
+  })
+
 })
