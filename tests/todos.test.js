@@ -76,4 +76,25 @@ describe('=== /todos route functionality ===', () => {
       })
   })
 
+  it('Should return appropriate error when todo by id not found', (done) => {
+    expect.assertions(4)
+
+    reqAgent
+      .get('/api/todos/zzz')
+      .end((err, res) => {
+        if (err) {
+          console.log('ERROR', err)
+          throw err
+        }
+
+        const { status, body } = res;
+
+        expect(status).toBe(404)
+        expect(body).toContainKeys(helpers.RESPONSE_PROPERTIES)
+        expect(body.payload).toBe(null)
+        expect(body.error).toBe(true)
+
+        done();
+      })
+  })
 })

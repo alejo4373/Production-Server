@@ -1,26 +1,25 @@
-const { db, helpers, errors } = require("./pgp");
+const { db, helpers, errors, recordNotFound, invalidInteger } = require("./pgp");
 
 const optionalCol = col => ({
-  name: col, 
+  name: col,
   skip: (col) => col.value === null || col.value === undefined || !col.exists
 })
 
 const getAllTodos = (owner_id) => db.any("SELECT * FROM todos WHERE owner_id = $1", owner_id);
 
-const getTodo = async (id, owner_id) => { 
+const getTodo = async (id, owner_id) => {
   let todo;
 
   try {
-    todo = await db.one("SELECT * FROM todos WHERE id = $/id/ AND owner_id = $/owner_id/", { 
+    todo = await db.one("SELECT * FROM todos WHERE id = $/id/ AND owner_id = $/owner_id/", {
       id,
       owner_id
     });
     return todo;
   } catch (err) {
-    if (err instanceof errors.QueryResultError &&
-        err.code === errors.queryResultErrorCode.noData) {
-        todo = {}
-        return todo;
+    if (recordNotFound(err) || invalidInteger(err)) {
+      todo = null
+      return todo;
     }
     throw (err)
   }
@@ -31,7 +30,7 @@ const createTodo = (todo) => db.one(
     RETURNING *`, todo
 )
 
-const removeTodo = async (id, owner_id) => { 
+const removeTodo = async (id, owner_id) => {
   let todo;
   try {
     todo = await db.one(`DELETE FROM todos WHERE id = $/id/ AND owner_id = $/owner_id/ 
@@ -39,9 +38,9 @@ const removeTodo = async (id, owner_id) => {
     return todo;
   } catch (err) {
     if (err instanceof errors.QueryResultError &&
-        err.code === errors.queryResultErrorCode.noData) {
-        todo = false 
-        return todo;
+      err.code === errors.queryResultErrorCode.noData) {
+      todo = false
+      return todo;
     }
     throw (err)
   }
@@ -56,16 +55,16 @@ const updateTodo = async (id, owner_id, todoEdits) => {
 
   const updateQuery = `${helpers.update(todoEdits, columnSet)} 
     WHERE id = $/id/ AND owner_id = $/owner_id/ RETURNING *`;
-  
+
   let todo;
   try {
-    todo = await db.one(updateQuery, {id, owner_id})
+    todo = await db.one(updateQuery, { id, owner_id })
     return todo
   } catch (err) {
     if (err instanceof errors.QueryResultError &&
-        err.code === errors.queryResultErrorCode.noData) {
-        todo = false 
-        return todo;
+      err.code === errors.queryResultErrorCode.noData) {
+      todo = false
+      return todo;
     }
     throw (err)
   }
@@ -74,7 +73,7 @@ const updateTodo = async (id, owner_id, todoEdits) => {
 module.exports = {
   getAllTodos,
   getTodo,
-  createTodo, 
+  createTodo,
   removeTodo,
   updateTodo,
 };

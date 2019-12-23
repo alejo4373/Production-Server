@@ -43,12 +43,20 @@ router.get('/:id', loginRequired, async (req, res, next) => {
 
   try {
     const todo = await Todos.getTodo(id, owner_id);
-    res.json({
-      payload: {
-        todo: todo
-      },
-      message: "Retrieved single todo",
-      error: false
+    if (todo) {
+      return res.json({
+        payload: {
+          todo: todo
+        },
+        message: "Retrieved single todo",
+        error: false
+      })
+    }
+
+    res.status(404).json({
+      payload: null,
+      message: "Todo not found",
+      error: true
     })
   } catch (err) {
     next(err)
