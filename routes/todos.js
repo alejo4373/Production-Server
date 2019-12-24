@@ -1,7 +1,9 @@
 const express = require('express');
 const router = express.Router();
+const { newTodoValidators, handleValidationErrors } = require('../validators/todos');
 const { Todos, Users } = require("../db");
 const { loginRequired } = require('../auth/helpers');
+
 
 router.get('/all', loginRequired, async (req, res, next) => {
   let { user } = req
@@ -16,7 +18,7 @@ router.get('/all', loginRequired, async (req, res, next) => {
   }
 });
 
-router.post('/new', loginRequired, async (req, res, next) => {
+router.post('/new', loginRequired, newTodoValidators, handleValidationErrors, async (req, res, next) => {
   const { body, user } = req;
   const newTodo = {
     ...body,
