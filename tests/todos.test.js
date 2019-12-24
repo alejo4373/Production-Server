@@ -54,6 +54,46 @@ describe('=== /todos route functionality ===', () => {
       })
   })
 
+  it('Should prevent adding a todo with invalid text or value properties', async (done) => {
+    expect.assertions(12)
+
+    const todos = {
+      invalidValue: {
+        value: -1,
+      },
+      invalidText: {
+        text: "   \n"
+      },
+      invalidValueAndText: {
+        value: "0b",
+        text: " \r\t"
+      }
+    }
+
+
+    let promises = []
+
+    for (let todo in todos) {
+      promises.push(reqAgent.post('/api/todos/new').send(todos[todo]))
+    }
+
+    try {
+      let responses = await Promise.all(promises);
+
+      for (let res of responses) {
+        const { status, body } = res;
+
+        expect(status).toBe(422)
+        expect(body).toContainKeys(helpers.RESPONSE_PROPERTIES)
+        expect(body.message).toMatch(/validation error/i)
+        expect(body.error).toBe(true)
+      }
+      done();
+    } catch (err) {
+      throw err
+    }
+  })
+
   it('Should get a todo with id 1', (done) => {
     expect.assertions(4)
 
