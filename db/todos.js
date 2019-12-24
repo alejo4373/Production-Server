@@ -1,4 +1,4 @@
-const { db, helpers, errors, recordNotFound, invalidInteger } = require("./pgp");
+const { db, helpers, recordNotFound, invalidInteger } = require("./pgp");
 
 const optionalCol = col => ({
   name: col,
@@ -37,8 +37,7 @@ const removeTodo = async (id, owner_id) => {
       RETURNING *`, { id, owner_id });
     return todo;
   } catch (err) {
-    if (err instanceof errors.QueryResultError &&
-      err.code === errors.queryResultErrorCode.noData) {
+    if (recordNotFound(err)) {
       todo = false
       return todo;
     }
@@ -61,8 +60,7 @@ const updateTodo = async (id, owner_id, todoEdits) => {
     todo = await db.one(updateQuery, { id, owner_id })
     return todo
   } catch (err) {
-    if (err instanceof errors.QueryResultError &&
-      err.code === errors.queryResultErrorCode.noData) {
+    if (recordNotFound(err)) {
       todo = false
       return todo;
     }

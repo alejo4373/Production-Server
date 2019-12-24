@@ -11,7 +11,6 @@ const invalidInteger = (err) => {
 
 module.exports = {
   helpers: pgp.helpers,
-  errors: pgp.errors,
   db: pgp(connectionString),
   recordNotFound,
   invalidInteger

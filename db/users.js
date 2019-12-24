@@ -1,4 +1,4 @@
-const { db, errors } = require('./pgp');
+const { db, recordNotFound } = require('./pgp');
 
 const createUser = async (user) => {
   try {
@@ -18,10 +18,8 @@ const getUserByUsername = async (username) => {
     });
     return user;
   } catch (err) {
-    if (err instanceof errors.QueryResultError) {
-      if (err.code === errors.queryResultErrorCode.noData) {
-        return false;
-      }
+    if (recordNotFound(err)) {
+      return false;
     }
     throw err;
   }

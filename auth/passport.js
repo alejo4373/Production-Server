@@ -2,7 +2,6 @@ const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 const { comparePasswords } = require('../auth/helpers');
 const { Users } = require('../db');
-const { errors } = require('../db/pgp');
 
 passport.use(new LocalStrategy(async (username, password, done) => {
   try {
@@ -14,7 +13,7 @@ passport.use(new LocalStrategy(async (username, password, done) => {
     const passMatch = await comparePasswords(password, user.password_digest);
     if (!passMatch) {
       return done(null, false, { message: "invalid password" })
-    } 
+    }
 
     delete user.password_digest;
     done(null, user);
