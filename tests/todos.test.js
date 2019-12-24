@@ -97,4 +97,48 @@ describe('=== /todos route functionality ===', () => {
         done();
       })
   })
+
+  it('Should delete a todo todo by id', (done) => {
+    expect.assertions(4)
+
+    reqAgent
+      .delete('/api/todos/1')
+      .end((err, res) => {
+        if (err) {
+          console.log('ERROR', err)
+          throw err
+        }
+
+        const { status, body } = res;
+
+        expect(status).toBe(200)
+        expect(body).toContainKeys(helpers.RESPONSE_PROPERTIES)
+        expect(body.payload.todo).toEqual(expectedTodo)
+        expect(body.error).toBe(false)
+
+        done();
+      })
+  })
+
+  it('Should return error when trying to delete a not-found todo by id', (done) => {
+    expect.assertions(4)
+
+    reqAgent
+      .delete('/api/todos/1')
+      .end((err, res) => {
+        if (err) {
+          console.log('ERROR', err)
+          throw err
+        }
+
+        const { status, body } = res;
+
+        expect(status).toBe(404)
+        expect(body).toContainKeys(helpers.RESPONSE_PROPERTIES)
+        expect(body.payload).toBe(null)
+        expect(body.error).toBe(true)
+
+        done();
+      })
+  })
 })

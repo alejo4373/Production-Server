@@ -71,15 +71,17 @@ router.delete('/:id', loginRequired, async (req, res, next) => {
     const deletedTodo = await Todos.removeTodo(id, owner_id);
     if (deletedTodo) {
       return res.json({
-        payload: deletedTodo,
+        payload: {
+          todo: deletedTodo,
+        },
+        message: "Todo deleted",
         error: false
       })
     }
 
     res.status(404).json({
-      payload: {
-        message: "Todo not found"
-      },
+      payload: null,
+      message: "Todo not found",
       error: true
     })
   } catch (err) {
