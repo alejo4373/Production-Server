@@ -10,7 +10,10 @@ router.get('/all', loginRequired, async (req, res, next) => {
   try {
     const todos = await Todos.getAllTodos(user.id);
     res.json({
-      payload: todos,
+      payload: {
+        todos: todos
+      },
+      message: "Retrieved all todos",
       error: false
     })
   } catch (err) {

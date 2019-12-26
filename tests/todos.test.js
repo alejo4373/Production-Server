@@ -31,6 +31,7 @@ beforeAll(async (done) => {
 afterAll(helpers.resetDB)
 
 describe('=== /todos route functionality ===', () => {
+
   it('Should add a todo', (done) => {
     expect.assertions(4)
 
@@ -180,5 +181,37 @@ describe('=== /todos route functionality ===', () => {
 
         done();
       })
+  })
+
+  it('Should successfully retrieve all todos', async (done) => {
+    expect.assertions(4)
+
+    const todos = [
+      { value: 100, text: "Do Laundry" },
+      { value: 1, text: "Buy Salt" },
+      { value: 999, text: "Mop floors" }
+    ]
+
+    let promises = []
+
+    for (let todo in todos) {
+      promises.push(reqAgent.post('/api/todos/new').send(todos[todo]))
+    }
+
+    try {
+      await Promise.all(promises);
+      const res = await reqAgent.get('/api/todos/all')
+      const { status, body } = res;
+
+      expect(status).toBe(200)
+      expect(body).toContainKeys(helpers.RESPONSE_PROPERTIES)
+      expect(body.payload.todos).toBeArrayOfSize(3)
+      expect(body.error).toBe(false)
+
+      done();
+    } catch (err) {
+      console.log('ERROR', err)
+      throw err
+    }
   })
 })
