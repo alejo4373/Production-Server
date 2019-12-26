@@ -104,18 +104,21 @@ router.patch('/:id', loginRequired, async (req, res, next) => {
     if (updatedTodo) {
       if (updatedTodo.completed) {
         awardedUser = await Users.awardPoints(owner_id, updatedTodo.value)
+        delete awardedUser.password_digest
       }
       return res.json({
-        payload: updatedTodo,
-        user: awardedUser,
+        payload: {
+          todo: updatedTodo,
+          user: awardedUser
+        },
+        message: "Todo updated",
         error: false
       })
     }
 
     res.status(404).json({
-      payload: {
-        message: "Todo not found"
-      },
+      payload: null,
+      message: "Todo not found",
       error: true
     })
   } catch (err) {

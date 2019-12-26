@@ -214,4 +214,39 @@ describe('=== /todos route functionality ===', () => {
       throw err
     }
   })
+
+  it('Should allow updating a todo\'s value', async (done) => {
+    expect.assertions(4)
+
+    const todoUpdates = {
+      value: 123
+    }
+
+    try {
+      // Add test todo
+      const newTodoResponse = await reqAgent.post('/api/todos/new').send(testTodo)
+      const newTodo = newTodoResponse.body.payload.todo
+      const expectedUpdatedTodo = {
+        ...newTodo,
+        ...todoUpdates
+      }
+
+      const { status, body } = await reqAgent.patch(`/api/todos/${newTodo.id}`).send(todoUpdates)
+
+      expect(status).toBe(200)
+      expect(body).toContainKeys(helpers.RESPONSE_PROPERTIES)
+      expect(body.payload.todo).toEqual(expectedUpdatedTodo)
+      expect(body.error).toBe(false)
+
+      done();
+    } catch (err) {
+      console.log('ERROR', err)
+      throw err
+    }
+  })
+
+  it.todo('Should allow updating a todo\'s text')
+  it.todo('Should return 404 when updating a todo\'s that doesn\'t exist')
+  it.todo('Should reward user when todo is user when todo is completed')
+  it.todo('Should prevent updating a todo with invalid property values')
 })
