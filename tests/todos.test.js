@@ -215,37 +215,49 @@ describe('=== /todos route functionality ===', () => {
     }
   })
 
-  it('Should allow updating a todo\'s value', async (done) => {
-    expect.assertions(4)
+  it('Should allow updating a todo\'s value and text properties. Both at once or one at a time', async (done) => {
+    expect.assertions(12)
 
-    const todoUpdates = {
-      value: 123
+    const todos = {
+      updatingValue: {
+        value: 123,
+      },
+      updatingText: {
+        text: "Buy new boots"
+      },
+      updatingBoth: {
+        value: 987,
+        text: "Organize desk"
+      }
     }
+
+    const todoUpdates = [todos.updatingValue, todos.updatingText, todos.updatingBoth]
 
     try {
       // Add test todo
       const newTodoResponse = await reqAgent.post('/api/todos/new').send(testTodo)
       const newTodo = newTodoResponse.body.payload.todo
-      const expectedUpdatedTodo = {
-        ...newTodo,
-        ...todoUpdates
+      let previousTodo = newTodo;
+
+      for (let update of todoUpdates) {
+        const expectedUpdatedTodo = {
+          ...previousTodo,
+          ...update
+        }
+
+        const { status, body } = await reqAgent.patch(`/api/todos/${newTodo.id}`).send(update)
+        previousTodo = body.payload.todo
+        expect(status).toBe(200)
+        expect(body).toContainKeys(helpers.RESPONSE_PROPERTIES)
+        expect(body.payload.todo).toEqual(expectedUpdatedTodo)
+        expect(body.error).toBe(false)
       }
-
-      const { status, body } = await reqAgent.patch(`/api/todos/${newTodo.id}`).send(todoUpdates)
-
-      expect(status).toBe(200)
-      expect(body).toContainKeys(helpers.RESPONSE_PROPERTIES)
-      expect(body.payload.todo).toEqual(expectedUpdatedTodo)
-      expect(body.error).toBe(false)
-
       done();
     } catch (err) {
-      console.log('ERROR', err)
       throw err
     }
   })
 
-  it.todo('Should allow updating a todo\'s text')
   it.todo('Should return 404 when updating a todo\'s that doesn\'t exist')
   it.todo('Should reward user when todo is user when todo is completed')
   it.todo('Should prevent updating a todo with invalid property values')
