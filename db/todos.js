@@ -60,8 +60,8 @@ const updateTodo = async (id, owner_id, todoEdits) => {
     todo = await db.one(updateQuery, { id, owner_id })
     return todo
   } catch (err) {
-    if (recordNotFound(err)) {
-      todo = false
+    if (recordNotFound(err) || invalidInteger(err)) {
+      todo = null
       return todo;
     }
     throw (err)

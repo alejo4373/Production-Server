@@ -258,7 +258,26 @@ describe('=== /todos route functionality ===', () => {
     }
   })
 
-  it.todo('Should return 404 when updating a todo\'s that doesn\'t exist')
+  it('Should return 404 when updating a todo\'s that doesn\'t exist', async (done) => {
+    expect.assertions(4)
+
+    const todoUpdates = {
+      value: 987,
+      text: "Organize desk"
+    }
+
+    try {
+      const { status, body } = await reqAgent.patch(`/api/todos/123abc`).send(todoUpdates)
+      expect(status).toBe(404)
+      expect(body).toContainKeys(helpers.RESPONSE_PROPERTIES)
+      expect(body.payload).toBe(null)
+      expect(body.error).toBe(true)
+      done();
+    } catch (err) {
+      throw err
+    }
+  })
+
   it.todo('Should reward user when todo is user when todo is completed')
   it.todo('Should prevent updating a todo with invalid property values')
 })
