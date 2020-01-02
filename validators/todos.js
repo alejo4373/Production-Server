@@ -1,5 +1,5 @@
 
-const { body, validationResult } = require('express-validator');
+const { body, oneOf, validationResult } = require('express-validator');
 
 const newTodoValidators = [
   body('text')
@@ -8,6 +8,15 @@ const newTodoValidators = [
   body('value')
     .isInt({ min: 1 })
     .trim()
+]
+
+const updateTodoValidators = [
+  oneOf([
+    body('text').exists().withMessage('not specified'),
+    body('value').exists().withMessage('not specified')
+  ]),
+  body('text').optional().trim().notEmpty().withMessage('cannot be empty'),
+  body('value').optional().isInt({ min: 1 }).withMessage('must be a valid positive number')
 ]
 
 const handleValidationErrors = (req, res, next) => {
@@ -29,5 +38,6 @@ const handleValidationErrors = (req, res, next) => {
 
 module.exports = {
   newTodoValidators,
+  updateTodoValidators,
   handleValidationErrors
 }
