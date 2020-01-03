@@ -2,7 +2,6 @@ const flattenErrors = (errors) => {
   const out = [];
   const stack = [];
 
-  console.log(errors)
   for (let err of errors) {
     stack.push(err)
     while (stack.length) {

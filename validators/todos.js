@@ -1,6 +1,7 @@
 
 const { body, oneOf, validationResult } = require('express-validator');
-const { flattenErrors } = require('../utils');
+// const validate = require('./validate');
+const { flattenErrors } = require('../utils')
 
 const newTodoValidators = [
   body('text')
@@ -38,7 +39,6 @@ const handleValidationErrors = (req, res, next) => {
 }
 
 module.exports = {
-  newTodoValidators,
-  updateTodoValidators,
-  handleValidationErrors
+  newTodoValidators: [newTodoValidators, handleValidationErrors],
+  updateTodoValidators: [updateTodoValidators, handleValidationErrors]
 }
