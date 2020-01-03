@@ -258,6 +258,67 @@ describe('=== /todos route functionality ===', () => {
     }
   })
 
+  it('Should prevent updating a todo with invalid property values', async (done) => {
+    expect.assertions(30)
+
+    const todoUpdates = {
+      invalidValueAndInvalidText: {
+        value: -10,
+        text: "\n \t "
+      },
+      invalidValueAndValidText: {
+        value: 0,
+        text: "Hello"
+      },
+      validValueAndInvalidText: {
+        value: 111,
+        text: '\n \n'
+      },
+      missingValueAndMissingText: {
+      },
+      missingValueAndInvalidText: {
+        text: "   "
+      },
+      invalidValueAndMissingText: {
+        value: "123abc"
+      }
+    }
+
+    try {
+      // Add test todo
+      const newTodoResponse = await reqAgent.post('/api/todos/new').send(testTodo)
+      const newTodo = newTodoResponse.body.payload.todo
+
+      let errorsLength;
+      for (let update in todoUpdates) {
+        switch (update) {
+          case "invalidValueAndInvalidText":
+          case "missingValueAndMissingText":
+            errorsLength = 2
+            break
+          case "invalidValueAndValidText":
+          case "validValueAndInvalidText":
+          case "invalidValueAndMissingText":
+          case "missingValueAndInvalidText":
+            errorsLength = 1
+            break
+        }
+
+        const { status, body } = await reqAgent.patch(`/api/todos/${newTodo.id}`).send(todoUpdates[update])
+        previousTodo = body.payload.todo
+        console.log('update', update, body.payload.errors.length, errorsLength)
+        expect(status).toBe(422)
+        expect(body).toContainKeys(helpers.RESPONSE_PROPERTIES)
+        expect(body.message).toMatch(/validation error/i)
+        expect(body.error).toBe(true)
+        expect(body.payload.errors).toBeArrayOfSize(errorsLength)
+      }
+      done();
+    } catch (err) {
+      throw err;
+    }
+  })
+
   it('Should return 404 when updating a todo\'s that doesn\'t exist', async (done) => {
     expect.assertions(4)
 
@@ -279,5 +340,4 @@ describe('=== /todos route functionality ===', () => {
   })
 
   it.todo('Should reward user when todo is user when todo is completed')
-  it.todo('Should prevent updating a todo with invalid property values')
 })
