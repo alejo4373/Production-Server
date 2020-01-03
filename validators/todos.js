@@ -1,5 +1,6 @@
 
 const { body, oneOf, validationResult } = require('express-validator');
+const { flattenErrors } = require('../utils');
 
 const newTodoValidators = [
   body('text')
@@ -26,9 +27,9 @@ const handleValidationErrors = (req, res, next) => {
       .status(422)
       .json({
         payload: {
-          errors: errors.array()
+          errors: flattenErrors(errors.array())
         },
-        message: 'Validation error',
+        message: 'Validation error/s',
         error: true
       })
   } else {
