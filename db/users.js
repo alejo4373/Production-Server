@@ -2,8 +2,10 @@ const { db, recordNotFound } = require('./pgp');
 
 const createUser = async (user) => {
   try {
-    let insertQuery = `INSERT INTO users(username, password_digest, points)
-    VALUES($/username/, $/password_digest/, $/points/) RETURNING *`;
+    let insertQuery = `
+      INSERT INTO users(username, email, password_digest, points)
+      VALUES($/username/, $/email/, $/password_digest/, $/points/) RETURNING *
+    `
     let newUser = await db.one(insertQuery, user)
     return newUser;
   } catch (err) {
