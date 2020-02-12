@@ -5,11 +5,12 @@ const { genPasswordDigest, loginRequired } = require('../auth/helpers');
 let { Users } = require('../db');
 
 router.post("/signup", async (req, res, next) => {
-  const { username, password } = req.body;
+  const { username, password, email } = req.body;
   try {
     let user = {
       username,
       password,
+      email,
       password_digest: await genPasswordDigest(req.body.password),
       points: 0
     };
