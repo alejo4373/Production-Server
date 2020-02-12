@@ -27,7 +27,7 @@ describe('=== User Authentication ===', () => {
 
         expect(status).toBe(201)
         expect(body).toContainAllKeys(RESPONSE_PROPERTIES)
-        expect(body.payload.user).toContainAllKeys(["id", "username", "points"])
+        expect(body.payload.user).toContainAllKeys(["id", "username", "points", "email"])
         expect(body.payload.user.username).toBe(newUser.username)
         expect(body.payload.user.points).toBe(0)
         expect(body.error).toBe(false)
@@ -77,7 +77,7 @@ describe('=== User Authentication ===', () => {
 
         expect(status).toBe(200)
         expect(body).toContainAllKeys(RESPONSE_PROPERTIES)
-        expect(body.payload.user).toContainAllKeys(["id", "username", "points"])
+        expect(body.payload.user).toContainAllKeys(["id", "username", "points", "email"])
         expect(body.payload.user.username).toBe(newUser.username)
         expect(body.error).toBe(false)
 
