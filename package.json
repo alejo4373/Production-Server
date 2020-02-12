@@ -15,6 +15,8 @@
   "dependencies": {
     "bcrypt": "^3.0.6",
     "cookie-parser": "~1.4.3",
+    "db-migrate": "^0.11.6",
+    "db-migrate-pg": "^1.0.0",
     "debug": "~2.6.9",
     "express": "~4.16.0",
     "express-session": "^1.16.2",
@@ -27,8 +29,6 @@
     "pg-promise": "^8.7.3"
   },
   "devDependencies": {
-    "db-migrate": "^0.11.6",
-    "db-migrate-pg": "^1.0.0",
     "jest": "^24.9.0",
     "jest-extended": "^0.11.2",
     "nodemon": "^1.19.1",
