@@ -1,6 +1,4 @@
-const request = require('supertest')
 const DBMigrate = require('db-migrate')
-const app = require('../app');
 const dbm = DBMigrate.getInstance(true, {
   cmdOptions: {
     'migrations-dir': './db/migrations' // Relative to test runner root
