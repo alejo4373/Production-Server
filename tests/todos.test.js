@@ -33,7 +33,7 @@ afterAll(helpers.resetDB)
 describe('=== /todos route functionality ===', () => {
 
   it('Should add a todo', (done) => {
-    expect.assertions(4)
+    expect.assertions(11)
 
     reqAgent
       .post('/api/todos/new')
@@ -45,10 +45,18 @@ describe('=== /todos route functionality ===', () => {
         }
 
         const { status, body } = res;
+        const { todo } = body.payload;
 
         expect(status).toBe(201)
         expect(body).toContainKeys(helpers.RESPONSE_PROPERTIES)
-        expect(body.payload.todo).toEqual(expectedTodo)
+        expect(todo).toBeObject()
+        expect(todo.id).toBe(expectedTodo.id)
+        expect(todo.text).toBe(expectedTodo.text)
+        expect(todo.value).toBe(expectedTodo.value)
+        expect(todo.completed).toBe(expectedTodo.completed)
+        expect(todo.owner_id).toBe(expectedTodo.owner_id)
+        expect(new Date(todo.created_at)).toBeValidDate()
+        expect(new Date(todo.updated_at)).toBeValidDate()
         expect(body.error).toBe(false)
 
         done();
@@ -96,7 +104,7 @@ describe('=== /todos route functionality ===', () => {
   })
 
   it('Should get a todo with id 1', (done) => {
-    expect.assertions(4)
+    expect.assertions(11)
 
     reqAgent
       .get('/api/todos/1')
@@ -107,10 +115,18 @@ describe('=== /todos route functionality ===', () => {
         }
 
         const { status, body } = res;
+        const { todo } = body.payload;
 
         expect(status).toBe(200)
         expect(body).toContainKeys(helpers.RESPONSE_PROPERTIES)
-        expect(body.payload.todo).toEqual(expectedTodo)
+        expect(todo).toBeObject()
+        expect(todo.id).toBe(expectedTodo.id)
+        expect(todo.text).toBe(expectedTodo.text)
+        expect(todo.value).toBe(expectedTodo.value)
+        expect(todo.completed).toBe(expectedTodo.completed)
+        expect(todo.owner_id).toBe(expectedTodo.owner_id)
+        expect(new Date(todo.created_at)).toBeValidDate()
+        expect(new Date(todo.updated_at)).toBeValidDate()
         expect(body.error).toBe(false)
 
         done();
@@ -139,8 +155,8 @@ describe('=== /todos route functionality ===', () => {
       })
   })
 
-  it('Should delete a todo todo by id', (done) => {
-    expect.assertions(4)
+  it('Should delete a todo by id', (done) => {
+    expect.assertions(11)
 
     reqAgent
       .delete('/api/todos/1')
@@ -151,10 +167,18 @@ describe('=== /todos route functionality ===', () => {
         }
 
         const { status, body } = res;
+        const { todo } = body.payload
 
         expect(status).toBe(200)
         expect(body).toContainKeys(helpers.RESPONSE_PROPERTIES)
-        expect(body.payload.todo).toEqual(expectedTodo)
+        expect(todo).toBeObject()
+        expect(todo.id).toBe(expectedTodo.id)
+        expect(todo.text).toBe(expectedTodo.text)
+        expect(todo.value).toBe(expectedTodo.value)
+        expect(todo.completed).toBe(expectedTodo.completed)
+        expect(todo.owner_id).toBe(expectedTodo.owner_id)
+        expect(new Date(todo.created_at)).toBeValidDate()
+        expect(new Date(todo.updated_at)).toBeValidDate()
         expect(body.error).toBe(false)
 
         done();
