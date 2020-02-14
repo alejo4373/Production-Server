@@ -154,4 +154,33 @@ describe('=== User Authentication ===', () => {
         done();
       })
   })
+
+  it('Should return the currently logged in user', async (done) => {
+    expect.assertions(5)
+
+    const newUser = {
+      username: 'JaneDoe',
+      password: 'abc123',
+      email: 'jane@email.com'
+    }
+
+    await helpers.registerTestUser(reqAgent, newUser)
+
+    reqAgent
+      .get('/api/auth/me')
+      .end((err, res) => {
+        if (err) throw err
+        const { status, body } = res;
+
+        expect(status).toBe(200)
+        expect(body).toContainAllKeys(RESPONSE_PROPERTIES)
+        expect(body.payload.user).toContainAllKeys(["id", "username", "points", "email"])
+        expect(body.payload.user.username).toBe(newUser.username)
+        expect(body.error).toBe(false)
+
+        done();
+      })
+  })
+
+
 })

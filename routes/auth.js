@@ -78,4 +78,14 @@ router.get('/logout', loginRequired, (req, res) => {
   })
 })
 
+router.get('/me', loginRequired, (req, res) => {
+  res.json({
+    payload: {
+      user: req.user
+    },
+    message: "Retrieved logged in user",
+    error: false
+  })
+})
+
 module.exports = router;
