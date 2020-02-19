@@ -49,11 +49,29 @@ const updateTodo = async (id, owner_id, todoEdits) => {
   const columnSet = new helpers.ColumnSet([
     optionalCol("text"),
     optionalCol("value"),
-    optionalCol("completed"),
-  ], { table: "todos" })
+    optionalCol("completed")
+  ])
 
-  const updateQuery = `${helpers.update(todoEdits, columnSet)} 
-    WHERE id = $/id/ AND owner_id = $/owner_id/ RETURNING *`;
+  // I needed a way to tell when a todo moved from completed=true to completed=false
+  // and vise versa because I need to award points if moving from incomplete to 
+  // completed and take away points if moving from completed to incomplete.
+  // I didn't want to have to fire another DB query before the update to then
+  // remember the previous completed state of the todo and compare it to the new
+  // state. I wanted to see if there was a way to do it directly on PostgresSQL
+  // and found the resources bellow helpful.
+  // https://stackoverflow.com/a/7927957/8662171
+  // https://www.postgresql.org/docs/9.4/explicit-locking.html
+
+  const updateQuery = `
+    ${helpers.update(todoEdits, columnSet, 'todos')}
+    FROM (
+      SELECT id, completed AS previously_completed
+      FROM todos
+      WHERE id = $/id/ FOR UPDATE 
+    ) AS todos_b
+    WHERE todos.id = todos_b.id
+    RETURNING *
+  `;
 
   let todo;
   try {

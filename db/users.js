@@ -36,15 +36,19 @@ const getUserById = async (id) => {
   }
 }
 
-const awardPoints = async (userId, points) => {
-  try {
-    let updateQuery = `UPDATE users SET points = points + $/points/ 
-    WHERE id = $/userId/ RETURNING *`
+const evaluatePoints = async (userId, updatedTodo) => {
+  const { completed, previously_completed, value } = updatedTodo
+  const award = completed && !previously_completed
 
-    let user = await db.one(updateQuery, {
-      userId,
-      points
-    })
+  let updateQuery = `
+    UPDATE users 
+    SET points = points ${award ? '+' : '-'} $/value/ 
+    WHERE id = $/userId/ RETURNING *
+  `
+
+  try {
+    let user = await db.one(updateQuery, { userId, value })
+    delete user.password_digest
     return user;
   } catch (err) {
     throw err;
@@ -55,5 +59,5 @@ module.exports = {
   createUser,
   getUserByUsername,
   getUserById,
-  awardPoints
+  evaluatePoints
 }

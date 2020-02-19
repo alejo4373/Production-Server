@@ -100,16 +100,17 @@ router.patch('/:id', loginRequired, updateTodoValidators, async (req, res, next)
   const todo_edits = req.body
   try {
     const updatedTodo = await Todos.updateTodo(id, owner_id, todo_edits);
-    let awardedUser;
+    let user;
+
     if (updatedTodo) {
-      if (updatedTodo.completed) {
-        awardedUser = await Users.awardPoints(owner_id, updatedTodo.value)
-        delete awardedUser.password_digest
+      if (updatedTodo.completed !== updatedTodo.previously_completed) {
+        user = await Users.evaluatePoints(owner_id, updatedTodo)
       }
+
       return res.json({
         payload: {
           todo: updatedTodo,
-          user: awardedUser
+          user: user
         },
         message: "Todo updated",
         error: false

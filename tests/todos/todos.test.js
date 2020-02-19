@@ -1,6 +1,6 @@
-const app = require('../app');
+const app = require('../../app');
 const request = require('supertest')
-const helpers = require('./helpers')
+const helpers = require('../helpers')
 
 const testUser = {
   username: 'JonSnow',
@@ -240,7 +240,7 @@ describe('=== /todos route functionality ===', () => {
   })
 
   it('Should allow updating a todo\'s value and text properties. Both at once or one at a time', async (done) => {
-    expect.assertions(12)
+    expect.assertions(33)
 
     const todos = {
       updatingValue: {
@@ -273,7 +273,14 @@ describe('=== /todos route functionality ===', () => {
         previousTodo = body.payload.todo
         expect(status).toBe(200)
         expect(body).toContainKeys(helpers.RESPONSE_PROPERTIES)
-        expect(body.payload.todo).toEqual(expectedUpdatedTodo)
+        expect(previousTodo).toBeObject()
+        expect(previousTodo.id).toBe(expectedUpdatedTodo.id)
+        expect(previousTodo.text).toBe(expectedUpdatedTodo.text)
+        expect(previousTodo.value).toBe(expectedUpdatedTodo.value)
+        expect(previousTodo.completed).toBe(expectedUpdatedTodo.completed)
+        expect(previousTodo.owner_id).toBe(expectedUpdatedTodo.owner_id)
+        expect(new Date(previousTodo.created_at)).toBeValidDate()
+        expect(new Date(previousTodo.updated_at)).toBeValidDate()
         expect(body.error).toBe(false)
       }
       done();
@@ -317,8 +324,10 @@ describe('=== /todos route functionality ===', () => {
       for (let update in todoUpdates) {
         switch (update) {
           case "invalidValueAndInvalidText":
-          case "missingValueAndMissingText":
             errorsLength = 2
+            break
+          case "missingValueAndMissingText":
+            errorsLength = 3
             break
           case "invalidValueAndValidText":
           case "validValueAndInvalidText":
@@ -362,6 +371,4 @@ describe('=== /todos route functionality ===', () => {
       throw err
     }
   })
-
-  it.todo('Should reward user when todo is user when todo is completed')
 })
