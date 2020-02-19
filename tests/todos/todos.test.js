@@ -339,7 +339,6 @@ describe('=== /todos route functionality ===', () => {
 
         const { status, body } = await reqAgent.patch(`/api/todos/${newTodo.id}`).send(todoUpdates[update])
         previousTodo = body.payload.todo
-        console.log('update', update, body.payload.errors.length, errorsLength)
         expect(status).toBe(422)
         expect(body).toContainKeys(helpers.RESPONSE_PROPERTIES)
         expect(body.message).toMatch(/validation error/i)
