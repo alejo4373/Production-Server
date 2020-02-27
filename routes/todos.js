@@ -5,7 +5,7 @@ const { Todos, Users } = require("../db");
 const { loginRequired } = require('../auth/helpers');
 
 
-router.get('/all', loginRequired, async (req, res, next) => {
+router.get('/', loginRequired, async (req, res, next) => {
   let { user } = req
   try {
     const todos = await Todos.getAllTodos(user.id);
@@ -21,7 +21,7 @@ router.get('/all', loginRequired, async (req, res, next) => {
   }
 });
 
-router.post('/new', loginRequired, newTodoValidators, async (req, res, next) => {
+router.post('/', loginRequired, newTodoValidators, async (req, res, next) => {
   const { body, user } = req;
   const newTodo = {
     ...body,

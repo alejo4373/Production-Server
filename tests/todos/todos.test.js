@@ -36,7 +36,7 @@ describe('=== /todos route functionality ===', () => {
     expect.assertions(11)
 
     reqAgent
-      .post('/api/todos/new')
+      .post('/api/todos')
       .send(testTodo)
       .end((err, res) => {
         if (err) {
@@ -83,7 +83,7 @@ describe('=== /todos route functionality ===', () => {
     let promises = []
 
     for (let todo in todos) {
-      promises.push(reqAgent.post('/api/todos/new').send(todos[todo]))
+      promises.push(reqAgent.post('/api/todos').send(todos[todo]))
     }
 
     try {
@@ -219,12 +219,12 @@ describe('=== /todos route functionality ===', () => {
     let promises = []
 
     for (let todo in todos) {
-      promises.push(reqAgent.post('/api/todos/new').send(todos[todo]))
+      promises.push(reqAgent.post('/api/todos').send(todos[todo]))
     }
 
     try {
       await Promise.all(promises);
-      const res = await reqAgent.get('/api/todos/all')
+      const res = await reqAgent.get('/api/todos')
       const { status, body } = res;
 
       expect(status).toBe(200)
@@ -259,7 +259,7 @@ describe('=== /todos route functionality ===', () => {
 
     try {
       // Add test todo
-      const newTodoResponse = await reqAgent.post('/api/todos/new').send(testTodo)
+      const newTodoResponse = await reqAgent.post('/api/todos').send(testTodo)
       const newTodo = newTodoResponse.body.payload.todo
       let previousTodo = newTodo;
 
@@ -317,7 +317,7 @@ describe('=== /todos route functionality ===', () => {
 
     try {
       // Add test todo
-      const newTodoResponse = await reqAgent.post('/api/todos/new').send(testTodo)
+      const newTodoResponse = await reqAgent.post('/api/todos').send(testTodo)
       const newTodo = newTodoResponse.body.payload.todo
 
       let errorsLength;

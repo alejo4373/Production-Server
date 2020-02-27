@@ -18,7 +18,7 @@ let newTodoId;
 beforeAll(async (done) => {
   await helpers.resetDB();
   await helpers.registerTestUser(reqAgent, testUser);
-  const { body } = await reqAgent.post('/api/todos/new').send(newTodo) // Add todo
+  const { body } = await reqAgent.post('/api/todos').send(newTodo) // Add todo
   newTodoId = body.payload.todo.id
   done()
 })

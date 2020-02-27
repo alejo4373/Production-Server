@@ -3,7 +3,7 @@ const router = express.Router();
 const { Journal } = require("../db")
 const { loginRequired } = require("../auth/helpers")
 
-router.post('/add', loginRequired, async (req, res, next) => {
+router.post('/entries', loginRequired, async (req, res, next) => {
   const newEntry = {
     ...req.body,
     owner_id: req.user.id
