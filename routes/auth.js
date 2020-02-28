@@ -2,6 +2,8 @@ let express = require('express');
 let router = express.Router();
 const passport = require('../auth/passport');
 const { genPasswordDigest, loginRequired } = require('../auth/helpers');
+const { loginValidators } = require('../validators/auth');
+
 let { Users } = require('../db');
 
 router.post("/signup", async (req, res, next) => {
@@ -45,7 +47,7 @@ router.post("/signup", async (req, res, next) => {
   }
 })
 
-router.post("/login", (req, res, next) => {
+router.post("/login", loginValidators, (req, res, next) => {
   passport.authenticate('local', (err, user, info) => {
     if (err) return next(err)
     if (!user) {
