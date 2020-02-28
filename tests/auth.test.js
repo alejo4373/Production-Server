@@ -213,4 +213,38 @@ describe('=== User Authentication ===', () => {
     done();
   })
 
+  it('Should prevent a user to sign up if either username, email or password are not valid', async (done) => {
+    expect.assertions(20)
+
+    const credentials = {
+      missingPassword: {
+        username: 'userABC',
+        email: 'user@email.com'
+      },
+
+      missingUsername: {
+        password: '123',
+        email: 'user@email.com'
+      },
+
+      missingEmail: {
+        username: 'userABC',
+        password: '123'
+      },
+
+      missingAll: {}
+    }
+
+    for (let invalidCred in credentials) {
+      const creds = credentials[invalidCred]
+      const { status, body } = await reqAgent.post('/api/auth/signup').send(creds)
+      expect(status).toBe(422)
+      expect(body).toContainAllKeys(RESPONSE_PROPERTIES)
+      expect(body.message).toMatch(/validation error/i)
+      expect(body.error).toBe(true)
+      expect(body.payload.errors).toBeArray()
+    }
+
+    done();
+  })
 })
