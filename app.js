@@ -36,6 +36,12 @@ app.use(passport.session());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, 'client/build')));
 
+app.use((req, res, next) => {
+  console.log('=================================')
+  console.log(req.session)
+  console.log(req.cookies)
+  next()
+})
 app.use('/', indexRouter);
 app.use('/api/auth', authRouter);
 app.use('/api/todos', todosRouter);
