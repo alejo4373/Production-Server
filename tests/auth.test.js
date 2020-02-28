@@ -11,11 +11,12 @@ const RESPONSE_PROPERTIES = ["payload", "message", "error"];
 
 describe('=== User Authentication ===', () => {
   it('Should register/sign-up a user successfully with starting points set to 0', (done) => {
-    expect.assertions(6)
+    expect.assertions(7)
 
     const newUser = {
       username: 'JonDoe',
-      password: 'abc123'
+      password: 'abc123',
+      email: 'jon@email.com'
     }
 
     reqAgent
@@ -29,6 +30,7 @@ describe('=== User Authentication ===', () => {
         expect(body).toContainAllKeys(RESPONSE_PROPERTIES)
         expect(body.payload.user).toContainAllKeys(["id", "username", "points", "email"])
         expect(body.payload.user.username).toBe(newUser.username)
+        expect(body.payload.user.email).toBe(newUser.email)
         expect(body.payload.user.points).toBe(0)
         expect(body.error).toBe(false)
 
@@ -41,7 +43,8 @@ describe('=== User Authentication ===', () => {
 
     const newUser = {
       username: 'JonDoe',
-      password: 'abc123'
+      password: 'abc123',
+      email: 'jon@email.com'
     }
 
     reqAgent
@@ -182,5 +185,32 @@ describe('=== User Authentication ===', () => {
       })
   })
 
+  it('Should prevent a user to log in if either username or password is missing', async (done) => {
+    expect.assertions(15)
+
+    const missingCredentials = {
+      missingPassword: {
+        username: 'userABC',
+      },
+
+      missingUsername: {
+        password: '123',
+      },
+
+      missingBoth: {}
+    }
+
+    for (let missing in missingCredentials) {
+      const creds = missingCredentials[missing]
+      const { status, body } = await reqAgent.post('/api/auth/login').send(creds)
+      expect(status).toBe(422)
+      expect(body).toContainAllKeys(RESPONSE_PROPERTIES)
+      expect(body.message).toMatch(/validation error/i)
+      expect(body.error).toBe(true)
+      expect(body.payload.errors).toBeArray()
+    }
+
+    done();
+  })
 
 })
