@@ -78,7 +78,7 @@ router.get('/logout', loginRequired, (req, res) => {
   })
 })
 
-router.get('/me', loginRequired, (req, res) => {
+router.get('/user', loginRequired, (req, res) => {
   res.json({
     payload: {
       user: req.user

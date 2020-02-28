@@ -167,7 +167,7 @@ describe('=== User Authentication ===', () => {
     await helpers.registerTestUser(reqAgent, newUser)
 
     reqAgent
-      .get('/api/auth/me')
+      .get('/api/auth/user')
       .end((err, res) => {
         if (err) throw err
         const { status, body } = res;
