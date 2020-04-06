@@ -25,23 +25,20 @@ if (process.env.NODE_ENV !== 'test') {
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser());
 app.use(session({
   secret: "new york city",
-  resave: false,
-  saveUninitialized: false
+  resave: true,
+  saveUninitialized: true,
+  cookie: {
+    maxAge: 1000 * 60 * 60 * 24 * 30 // 30 days
+  }
 }))
+app.use(cookieParser("new york city"));
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, 'client/build')));
 
-app.use((req, res, next) => {
-  console.log('=================================')
-  console.log(req.session)
-  console.log(req.cookies)
-  next()
-})
 app.use('/', indexRouter);
 app.use('/api/auth', authRouter);
 app.use('/api/todos', todosRouter);
