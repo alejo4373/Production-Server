@@ -4,7 +4,8 @@ const helpers = require('../helpers')
 
 const testUser = {
   username: 'JonSnow',
-  password: 'abc123'
+  password: 'abc123',
+  email: 'jon@winterfell.com'
 }
 
 const testTodo = {
@@ -137,7 +138,7 @@ describe('=== /todos route functionality ===', () => {
     expect.assertions(4)
 
     reqAgent
-      .get('/api/todos/zzz')
+      .get('/api/todos/999')
       .end((err, res) => {
         if (err) {
           console.log('ERROR', err)
