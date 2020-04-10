@@ -361,7 +361,8 @@ describe('=== /todos route functionality ===', () => {
     }
 
     try {
-      const { status, body } = await reqAgent.patch(`/api/todos/123abc`).send(todoUpdates)
+      const { status, body, text } = await reqAgent.patch(`/api/todos/123`).send(todoUpdates)
+      console.log('====', body, text)
       expect(status).toBe(404)
       expect(body).toContainKeys(helpers.RESPONSE_PROPERTIES)
       expect(body.payload).toBe(null)
