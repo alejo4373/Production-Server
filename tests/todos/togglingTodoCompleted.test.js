@@ -3,11 +3,6 @@ const request = require('supertest')
 const helpers = require('../helpers')
 const reqAgent = request.agent(app);
 
-const testUser = {
-  username: 'JonSnow',
-  password: 'abc123'
-}
-
 const newTodo = {
   text: "test todo",
   value: 200
@@ -17,7 +12,7 @@ let newTodoId;
 
 beforeAll(async (done) => {
   await helpers.resetDB();
-  await helpers.registerTestUser(reqAgent, testUser);
+  await helpers.registerTestUser(reqAgent);
   const { body } = await reqAgent.post('/api/todos').send(newTodo) // Add todo
   newTodoId = body.payload.todo.id
   done()
