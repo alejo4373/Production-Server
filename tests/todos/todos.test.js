@@ -2,11 +2,6 @@ const app = require('../../app');
 const request = require('supertest')
 const helpers = require('../helpers')
 
-const testUser = {
-  username: 'JonSnow',
-  password: 'abc123'
-}
-
 const testTodo = {
   text: "test todo",
   value: 200
@@ -24,7 +19,7 @@ const reqAgent = request.agent(app);
 
 beforeAll(async (done) => {
   await helpers.resetDB();
-  await helpers.registerTestUser(reqAgent, testUser);
+  await helpers.registerTestUser(reqAgent);
   done()
 })
 
@@ -137,7 +132,7 @@ describe('=== /todos route functionality ===', () => {
     expect.assertions(4)
 
     reqAgent
-      .get('/api/todos/zzz')
+      .get('/api/todos/999')
       .end((err, res) => {
         if (err) {
           console.log('ERROR', err)
@@ -360,7 +355,7 @@ describe('=== /todos route functionality ===', () => {
     }
 
     try {
-      const { status, body } = await reqAgent.patch(`/api/todos/123abc`).send(todoUpdates)
+      const { status, body, text } = await reqAgent.patch(`/api/todos/123`).send(todoUpdates)
       expect(status).toBe(404)
       expect(body).toContainKeys(helpers.RESPONSE_PROPERTIES)
       expect(body.payload).toBe(null)

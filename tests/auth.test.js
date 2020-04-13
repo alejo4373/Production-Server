@@ -167,7 +167,8 @@ describe('=== User Authentication ===', () => {
       email: 'jane@email.com'
     }
 
-    await helpers.registerTestUser(reqAgent, newUser)
+    await reqAgent.post('/api/auth/signup').send(newUser)
+
 
     reqAgent
       .get('/api/auth/user')
