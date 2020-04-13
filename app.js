@@ -5,6 +5,8 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var session = require('express-session');
 var passport = require('./auth/passport');
+var pgSession = require('connect-pg-simple')(session);
+var { db } = require('./db/pgp')
 
 var indexRouter = require('./routes/index');
 var authRouter = require('./routes/auth');
@@ -26,6 +28,9 @@ if (process.env.NODE_ENV !== 'test') {
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(session({
+  store: new pgSession({
+    pool: db.$pool,
+  }),
   secret: "new york city",
   resave: true,
   saveUninitialized: true,
