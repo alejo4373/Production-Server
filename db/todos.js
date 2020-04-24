@@ -5,7 +5,7 @@ const optionalCol = col => ({
   skip: (col) => col.value === null || col.value === undefined || !col.exists
 })
 
-const getAllTodos = (owner_id) => db.any("SELECT * FROM todos WHERE owner_id = $1", owner_id);
+const getAllTodos = (owner_id) => db.any("SELECT * FROM todos WHERE owner_id = $1 ORDER BY created_at DESC", owner_id);
 
 const getTodo = async (id, owner_id) => {
   let todo;
