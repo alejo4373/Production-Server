@@ -8,7 +8,6 @@ var passport = require('./auth/passport');
 var pgSession = require('connect-pg-simple')(session);
 var { db } = require('./db/pgp')
 
-var indexRouter = require('./routes/index');
 var authRouter = require('./routes/auth');
 var todosRouter = require('./routes/todos');
 var journalRouter = require('./routes/journal');
@@ -18,7 +17,6 @@ var app = express();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'jade');
 
 // Enable req/res logs when not testing
 if (process.env.NODE_ENV !== 'test') {
@@ -44,7 +42,6 @@ app.use(passport.session());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, 'client/build')));
 
-app.use('/', indexRouter);
 app.use('/api/auth', authRouter);
 app.use('/api/todos', todosRouter);
 app.use('/api/journal', journalRouter);
@@ -64,9 +61,13 @@ app.use(function (err, req, res, next) {
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
 
-  // render the error page
+  console.log(err)
   res.status(err.status || 500);
-  res.render('error');
+  res.json({
+    payload: null,
+    message: err.message,
+    error: true
+  });
 });
 
 module.exports = app;
