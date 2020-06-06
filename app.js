@@ -29,7 +29,7 @@ app.use(session({
   store: new pgSession({
     pool: db.$pool,
   }),
-  secret: "new york city",
+  secret: process.env.SESSION_SECRET,
   resave: true,
   saveUninitialized: true,
   cookie: {
