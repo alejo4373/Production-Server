@@ -1,23 +1,30 @@
-const { db, helpers } = require("./pgp");
+const { db } = require("./pgp");
+const Tags = require('./tags')
 
 const addEntry = async (entry) => {
-  const { tag_ids } = entry;
+  const { tags } = entry;
   try {
-    const journalEntry = await db.one(`INSERT INTO journal_entries(text, owner_id) 
+    const newEntry = await db.one(`INSERT INTO journal_entries(text, owner_id) 
       VALUES($/text/, $/owner_id/) RETURNING *`, entry)
-    const values = tag_ids.map(tag_id => ({
-      'tag_id': tag_id,
-      'je_id': journalEntry.id
-    }))
 
-    const columnSet = new helpers.ColumnSet(['je_id', 'tag_id'], { table: 'je_tags' })
-    const query = helpers.insert(values, columnSet)
+    const existingTags = await Tags.getTagsByName(tags)
 
-    await db.none(query)
+    const newTags = tags.filter(tagName => {
+      const found = existingTags.find(t => t.name === tagName)
+      return !found
+    })
+
+    let newInsertedTags = []
+    if (newTags.length) {
+      newInsertedTags = await Tags.createMultiple(newTags, entry.owner_id)
+    }
+
+    let allTags = [...existingTags, ...newInsertedTags]
+    await Tags.associateWithJournalEntry(allTags, newEntry.id)
 
     return {
-      ...journalEntry,
-      tag_ids: tag_ids
+      ...newEntry,
+      tags: allTags
     }
   } catch (err) {
     throw err;
