@@ -24,7 +24,7 @@ const addEntry = async (entry) => {
 
     return {
       ...newEntry,
-      tags: allTags
+      tags: allTags.map(t => t.name)
     }
   } catch (err) {
     throw err;
@@ -32,7 +32,19 @@ const addEntry = async (entry) => {
 }
 
 const getAllEntries = (owner_id) => {
-  return db.any(`SELECT * FROM journal_entries WHERE owner_id = $1`, owner_id)
+  return db.any(`
+    SELECT 
+      je.id, 
+      je.text, 
+      je.ts, 
+      ARRAY_AGG(tags.name) AS tags
+    FROM journal_entries AS je
+      JOIN je_tags ON je_tags.je_id = je.id
+      JOIN tags ON je_tags.tag_id = tags.id
+    WHERE je.owner_id = $1
+    GROUP BY(je.id)
+    ORDER BY(je.ts) DESC
+  `, owner_id)
 };
 
 module.exports = {
