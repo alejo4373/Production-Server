@@ -36,13 +36,11 @@ const getUserById = async (id) => {
   }
 }
 
-const evaluatePoints = async (userId, updatedTodo) => {
-  const { completed, previously_completed, value } = updatedTodo
-  const award = completed && !previously_completed
-
+const evaluatePoints = async (userId, todo) => {
+  const { completed, value } = todo
   let updateQuery = `
     UPDATE users 
-    SET points = points ${award ? '+' : '-'} $/value/ 
+    SET points = points ${completed ? '+' : '-'} $/value/ 
     WHERE id = $/userId/ RETURNING *
   `
 
