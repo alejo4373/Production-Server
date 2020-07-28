@@ -1,11 +1,29 @@
-const { db, helpers, recordNotFound, invalidInteger } = require("./pgp");
+const { db, helpers, pgpAs, recordNotFound, invalidInteger } = require("./pgp");
 
 const optionalCol = col => ({
   name: col,
   skip: (col) => col.value === null || col.value === undefined || !col.exists
 })
 
-const getAllTodos = (owner_id) => db.any("SELECT * FROM todos WHERE owner_id = $1 ORDER BY created_at DESC", owner_id);
+const getAllTodos = async (queryParams) => {
+  const params = Object.keys(queryParams)
+  const whereConditions = params.map(p => {
+    let columnName = pgpAs.name(p)
+    if (['completed_at', 'updated_at', 'due_at'].includes(p)) {
+      columnName += "::Date" // Type cast to SQL Date to discard time
+    }
+    return `${columnName} = $/${p}/`
+  }).join(' AND ')
+
+  const SQL = `
+    SELECT * FROM todos 
+      WHERE ${whereConditions}
+      ORDER BY created_at DESC
+  `
+
+  let todos = await db.any(SQL, queryParams);
+  return todos
+}
 
 const getTodo = async (id, owner_id) => {
   let todo;

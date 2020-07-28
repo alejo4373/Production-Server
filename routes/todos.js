@@ -6,9 +6,15 @@ const { loginRequired } = require('../auth/helpers');
 
 
 router.get('/', loginRequired, async (req, res, next) => {
-  let { user } = req
+  let { user, query } = req
+
+  const queryParams = {
+    ...query,
+    owner_id: user.id
+  }
+
   try {
-    const todos = await Todos.getAllTodos(user.id);
+    const todos = await Todos.getAllTodos(queryParams);
     res.json({
       payload: {
         todos: todos

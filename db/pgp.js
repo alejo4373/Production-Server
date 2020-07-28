@@ -1,3 +1,5 @@
+const pgPromise = require('pg-promise');
+
 const pgp = require('pg-promise')();
 const db = pgp(process.env.DATABASE_URL)
 
@@ -12,6 +14,7 @@ const invalidInteger = (err) => {
 module.exports = {
   helpers: pgp.helpers,
   db,
+  pgpAs: pgp.as,
   recordNotFound,
   invalidInteger
 }
