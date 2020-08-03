@@ -31,8 +31,8 @@ const addEntry = async (entry) => {
   }
 }
 
-const getAllEntries = (owner_id) => {
-  return db.any(`
+const getAllEntries = (params) => {
+  const SQL = `
     SELECT 
       je.id, 
       je.text, 
@@ -41,10 +41,11 @@ const getAllEntries = (owner_id) => {
     FROM journal_entries AS je
       JOIN je_tags ON je_tags.je_id = je.id
       JOIN tags ON je_tags.tag_id = tags.id
-    WHERE je.owner_id = $1
+    WHERE je.owner_id = $/owner_id/ ${params.date ? "AND je.ts::Date = $/date/" : ""}
     GROUP BY(je.id)
     ORDER BY(je.ts) DESC
-  `, owner_id)
+  `
+  return db.any(SQL, params)
 };
 
 module.exports = {
