@@ -6,11 +6,16 @@ const optionalCol = col => ({
 })
 
 const getAllTodos = async (queryParams) => {
+  const client_tz = queryParams.client_tz || 'UTC'
+  delete queryParams.client_tz // To avoid being used in the whereConditions
+
   const params = Object.keys(queryParams)
+  const timeParams = new Set(['completed_at', 'updated_at', 'due_at'])
+
   const whereConditions = params.map(p => {
     let columnName = pgpAs.name(p)
-    if (['completed_at', 'updated_at', 'due_at'].includes(p)) {
-      columnName += "::Date" // Type cast to SQL Date to discard time
+    if (timeParams.has(p)) {
+      columnName = `(${columnName} AT TIME ZONE $/client_tz/)::Date`// Type cast to SQL Date to discard time
     }
     return `${columnName} = $/${p}/`
   }).join(' AND ')
@@ -21,7 +26,10 @@ const getAllTodos = async (queryParams) => {
       ORDER BY created_at DESC
   `
 
-  let todos = await db.any(SQL, queryParams);
+  let todos = await db.any(SQL, {
+    ...queryParams,
+    client_tz
+  });
   return todos
 }
 

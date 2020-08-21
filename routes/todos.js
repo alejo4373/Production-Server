@@ -1,11 +1,11 @@
 const express = require('express');
 const router = express.Router();
-const { newTodoValidators, updateTodoValidators, toggleCompleteTodoValidators } = require('../validators/todos');
+const { newTodoValidators, updateTodoValidators, retrieveTodosValidators } = require('../validators/todos');
 const { Todos, Users } = require("../db");
 const { loginRequired } = require('../auth/helpers');
 
 
-router.get('/', loginRequired, async (req, res, next) => {
+router.get('/', loginRequired, retrieveTodosValidators, async (req, res, next) => {
   let { user, query } = req
 
   const queryParams = {

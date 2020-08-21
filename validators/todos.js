@@ -1,6 +1,6 @@
-
-const { body, oneOf } = require('express-validator');
+const { body, oneOf, query } = require('express-validator');
 const withValidationErrorHandler = require('./withValidationErrorHandler');
+const utils = require('../utils');
 
 const newTodoValidators = withValidationErrorHandler([
   body('text')
@@ -21,7 +21,17 @@ const updateTodoValidators = withValidationErrorHandler([
   body('value').optional().isInt({ min: 1 }).withMessage('must be a valid positive number'),
 ])
 
+const retrieveTodosValidators = withValidationErrorHandler([
+  query('completed_at').optional().isISO8601().withMessage('must be in the format YYYY-DD-MM'),
+  query('updated_at').optional().isISO8601().withMessage('must be in the format YYYY-DD-MM'),
+  query('due_at').optional().isISO8601().withMessage('must be in the format YYYY-DD-MM'),
+  query('client_tz').optional().custom((client_tz, { req }) => utils.isValidTimeZone(client_tz)),
+  query('completed').optional().isBoolean().withMessage('must be boolean true or false'),
+  query('value').optional().isInt().withMessage('must be an integer number'),
+])
+
 module.exports = {
   newTodoValidators,
-  updateTodoValidators
+  updateTodoValidators,
+  retrieveTodosValidators
 }
