@@ -27,7 +27,7 @@ router.get('/entries', loginRequired, getEntriesValidators, async (req, res, nex
     ...req.query
   }
   try {
-    const entries = await Journal.getAllEntries(params);
+    const entries = await Journal.getEntries(params);
     res.json({
       payload: entries,
       error: false
@@ -36,4 +36,5 @@ router.get('/entries', loginRequired, getEntriesValidators, async (req, res, nex
     next(err);
   }
 })
+
 module.exports = router;

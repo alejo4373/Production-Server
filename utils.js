@@ -1,3 +1,4 @@
+const { db } = require('./db/pgp');
 const flattenErrors = (errors) => {
   const out = [];
   const stack = [];
@@ -18,6 +19,15 @@ const flattenErrors = (errors) => {
   return out;
 }
 
+const isValidTimeZone = async (timezone) => {
+  try {
+    await db.one("SELECT name from pg_timezone_names WHERE name = $1", timezone)
+  } catch (err) {
+    throw new Error('Invalid timezone. Use a valid IANA timezone or UTC')
+  }
+}
+
 module.exports = {
-  flattenErrors
+  flattenErrors,
+  isValidTimeZone
 }

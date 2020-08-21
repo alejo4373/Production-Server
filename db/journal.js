@@ -31,7 +31,9 @@ const addEntry = async (entry) => {
   }
 }
 
-const getAllEntries = (params) => {
+const getEntries = async (params) => {
+  const client_tz = params.client_tz || "UTC"
+
   const SQL = `
     SELECT 
       je.id, 
@@ -41,14 +43,17 @@ const getAllEntries = (params) => {
     FROM journal_entries AS je
       JOIN je_tags ON je_tags.je_id = je.id
       JOIN tags ON je_tags.tag_id = tags.id
-    WHERE je.owner_id = $/owner_id/ ${params.date ? "AND je.ts::Date = $/date/" : ""}
+    WHERE je.owner_id = $/owner_id/ ${params.date ? "AND (je.ts AT TIME ZONE $/client_tz/)::Date = $/date/" : ""}
     GROUP BY(je.id)
     ORDER BY(je.ts) DESC
   `
-  return db.any(SQL, params)
+  return db.any(SQL, {
+    ...params,
+    client_tz
+  })
 };
 
 module.exports = {
   addEntry,
-  getAllEntries,
+  getEntries,
 };
