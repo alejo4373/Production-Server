@@ -1,4 +1,5 @@
 const { db, helpers, pgpAs, recordNotFound, invalidInteger } = require("./pgp");
+const Tags = require("./tags");
 
 const optionalCol = col => ({
   name: col,
@@ -51,10 +52,41 @@ const getTodo = async (id, owner_id) => {
   }
 }
 
-const createTodo = (todo) => db.one(
-  `INSERT INTO todos(owner_id, text, value) VALUES($/owner_id/, $/text/, $/value/) 
+const createTodo = async (todo) => {
+  try {
+    const newTodo = await db.one(
+      `INSERT INTO todos(owner_id, text, value) VALUES($/owner_id/, $/text/, $/value/) 
     RETURNING *`, todo
-)
+    )
+
+    const existingTags = await Tags.getTagsByName(todo.tags)
+
+    // A better approach for this might be to have tags be unique 
+    // by their name and insert the Tags and attempt to insert all Tags
+    // and let duplicates fail or take note to create the association only
+    // This is not scallable if we have a ton of users creating their own unique tags.
+    // All tags need to be loaded into memory.
+    const newTags = todo.tags.filter(tagName => {
+      const found = existingTags.find(t => t.name === tagName)
+      return !found
+    })
+
+    let newInsertedTags = [];
+    if (newTags.length) {
+      newInsertedTags = await Tags.createMultiple(newTags, newTodo.owner_id)
+    }
+
+    let allTags = [...existingTags, ...newInsertedTags]
+    await Tags.associateWithTodo(allTags, newTodo.id)
+
+    return {
+      ...newTodo,
+      tags: allTags.map(t => t.name)
+    }
+  } catch (err) {
+    throw err
+  }
+}
 
 const removeTodo = async (id, owner_id) => {
   let todo;

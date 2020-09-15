@@ -36,9 +36,22 @@ const associateWithJournalEntry = (tags, journalEntryId) => {
   return db.none(query)
 }
 
+const associateWithTodo = (tags, todoId) => {
+  const values = tags.map(tag => ({
+    'tag_id': tag.id,
+    'todo_id': todoId
+  }))
+
+  const columnSet = new helpers.ColumnSet(['todo_id', 'tag_id'], { table: 'todos_tags' })
+  const query = helpers.insert(values, columnSet)
+
+  return db.none(query)
+}
+
 module.exports = {
   createTag,
   getTagsByName,
   associateWithJournalEntry,
+  associateWithTodo,
   createMultiple
 };
