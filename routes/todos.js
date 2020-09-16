@@ -48,6 +48,21 @@ router.post('/', loginRequired, newTodoValidators, async (req, res, next) => {
   }
 });
 
+router.get('/byTags', async (req, res, next) => {
+  const { tags } = req.query
+
+  try {
+    let todos = await Todos.getTodosByTags(tags)
+    res.json({
+      payload: todos,
+      message: "Retrieved todos by tags",
+      error: false
+    })
+  } catch (err) {
+    next(err)
+  }
+})
+
 router.get('/:id', loginRequired, async (req, res, next) => {
   const { id } = req.params;
   const owner_id = req.user.id

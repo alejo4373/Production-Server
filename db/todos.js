@@ -52,6 +52,30 @@ const getTodo = async (id, owner_id) => {
   }
 }
 
+const getTodosByTags = async (tags) => {
+  const variables = tags.map((_, i) => {
+    return `$${i + 1}::VARCHAR`
+  })
+
+  const SQL = `
+    SELECT
+      todos.*,
+      ARRAY_AGG(tags.name) AS tags
+    FROM todos
+          JOIN todos_tags ON todos.id = todos_tags.todo_id
+          JOIN tags ON todos_tags.tag_id = tags.id
+    GROUP BY todos.id
+    HAVING ARRAY[${variables.join(', ')}] && ARRAY_AGG(tags.name)
+  `
+
+  try {
+    const todos = await db.any(SQL, tags)
+    return todos;
+  } catch (err) {
+    throw (err)
+  }
+}
+
 const createTodo = async (todo) => {
   try {
     const newTodo = await db.one(
@@ -156,6 +180,7 @@ const toggleCompleted = async (id, owner_id) => {
 
 module.exports = {
   getAllTodos,
+  getTodosByTags,
   getTodo,
   createTodo,
   removeTodo,
