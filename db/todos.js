@@ -65,7 +65,7 @@ const getTodosByTags = async (tags) => {
           JOIN todos_tags ON todos.id = todos_tags.todo_id
           JOIN tags ON todos_tags.tag_id = tags.id
     GROUP BY todos.id
-    HAVING ARRAY[${variables.join(', ')}] && ARRAY_AGG(tags.name)
+    HAVING ARRAY[${variables.join(', ')}] <@ ARRAY_AGG(tags.name)
   `
 
   try {
