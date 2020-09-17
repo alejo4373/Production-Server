@@ -54,7 +54,7 @@ router.get('/byTags', async (req, res, next) => {
   try {
     let todos = await Todos.getTodosByTags(tags)
     res.json({
-      payload: todos,
+      payload: { todos },
       message: "Retrieved todos by tags",
       error: false
     })
