@@ -7,6 +7,19 @@ const createTag = (newTag) => {
   )
 }
 
+const getByType = (type, ownerId) => {
+  const table = type === 'journal' ? 'je_tags' : 'todos_tags'
+  const SQL = `
+    SELECT DISTINCT
+      tags.id,
+      name
+    FROM tags
+    JOIN ${table} ON tags.id = ${table}.tag_id
+    WHERE tags.owner_id = $1
+  `
+  return db.any(SQL, ownerId)
+}
+
 const createMultiple = (tags, owner_id) => {
   let query = 'INSERT INTO tags(name, owner_id) VALUES'
 
@@ -51,6 +64,7 @@ const associateWithTodo = (tags, todoId) => {
 module.exports = {
   createTag,
   getTagsByName,
+  getByType,
   associateWithJournalEntry,
   associateWithTodo,
   createMultiple

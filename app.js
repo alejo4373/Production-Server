@@ -45,7 +45,7 @@ app.use(express.static(path.join(__dirname, 'client/build')));
 app.use('/api/auth', authRouter);
 app.use('/api/todos', todosRouter);
 app.use('/api/journal', journalRouter);
-app.use('/api/tag', tagsRouter);
+app.use('/api/tags', tagsRouter);
 
 app.use('*', (req, res, next) => {
   res.sendFile(path.resolve('client/build/index.html'))

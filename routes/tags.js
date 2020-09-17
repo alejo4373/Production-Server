@@ -20,4 +20,19 @@ router.post('/', loginRequired, async (req, res, next) => {
   }
 })
 
+router.get('/', loginRequired, async (req, res, next) => {
+  const ownerId = req.user.id
+  const { type } = req.query
+
+  try {
+    const tags = await Tags.getByType(type, ownerId);
+    res.json({
+      payload: tags,
+      error: false
+    })
+  } catch (err) {
+    next(err);
+  }
+})
+
 module.exports = router;
