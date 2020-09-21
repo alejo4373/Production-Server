@@ -18,13 +18,19 @@ const getAllTodos = async (queryParams) => {
     if (timeParams.has(p)) {
       columnName = `(${columnName} AT TIME ZONE $/client_tz/)::Date`// Type cast to SQL Date to discard time
     }
-    return `${columnName} = $/${p}/`
+    return `todos.${columnName} = $/${p}/`
   }).join(' AND ')
 
   const SQL = `
-    SELECT * FROM todos 
-      WHERE ${whereConditions}
-      ORDER BY created_at DESC
+    SELECT
+      todos.*,
+      ARRAY_AGG(tags.name) AS tags
+    FROM todos 
+      LEFT JOIN todos_tags ON todos.id = todos_tags.todo_id
+      LEFT JOIN tags ON todos_tags.tag_id = tags.id
+    WHERE ${whereConditions}
+    GROUP BY todos.id
+    ORDER BY created_at DESC
   `
 
   let todos = await db.any(SQL, {
@@ -36,12 +42,19 @@ const getAllTodos = async (queryParams) => {
 
 const getTodo = async (id, owner_id) => {
   let todo;
+  const SQL = `
+    SELECT 
+      todos.*,
+      ARRAY_AGG(tags.name) AS tags
+    FROM todos 
+      LEFT JOIN todos_tags ON todos.id = todos_tags.todo_id
+      LEFT JOIN tags ON todos_tags.tag_id = tags.id 
+    WHERE todos.id = $/id/ AND todos.owner_id = $/owner_id/
+    GROUP BY todos.id
+  `
 
   try {
-    todo = await db.one("SELECT * FROM todos WHERE id = $/id/ AND owner_id = $/owner_id/", {
-      id,
-      owner_id
-    });
+    todo = await db.one(SQL, { id, owner_id });
     return todo;
   } catch (err) {
     if (recordNotFound(err) || invalidInteger(err)) {
