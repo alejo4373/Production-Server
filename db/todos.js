@@ -13,12 +13,13 @@ const getAllTodos = async (queryParams) => {
   const params = Object.keys(queryParams)
   const timeParams = new Set(['completed_at', 'updated_at', 'due_at'])
 
-  const whereConditions = params.map(p => {
-    let columnName = pgpAs.name(p)
-    if (timeParams.has(p)) {
-      columnName = `(${columnName} AT TIME ZONE $/client_tz/)::Date`// Type cast to SQL Date to discard time
+  const whereConditions = params.map(param => {
+    let columnName = pgpAs.name(param)
+    if (timeParams.has(param)) {
+      return `(todos.${columnName} AT TIME ZONE $/client_tz/)::Date = $/${param}/` // Type cast to SQL Date AT TIME ZONE to discard time
+    } else {
+      return `todos.${columnName} = $/${param}/`
     }
-    return `todos.${columnName} = $/${p}/`
   }).join(' AND ')
 
   const SQL = `
