@@ -37,6 +37,10 @@ const getTagsByName = (tags) => {
   return db.any('SELECT * FROM tags WHERE tags.name IN ($1:csv)', [tags])
 }
 
+const getTagByName = (tag) => {
+  return db.oneOrNone('SELECT * FROM tags WHERE tags.name = $1', [tag])
+}
+
 const associateWithJournalEntry = (tags, journalEntryId) => {
   const values = tags.map(tag => ({
     'tag_id': tag.id,
@@ -64,6 +68,7 @@ const associateWithTodo = (tags, todoId) => {
 module.exports = {
   createTag,
   getTagsByName,
+  getTagByName,
   getByType,
   associateWithJournalEntry,
   associateWithTodo,

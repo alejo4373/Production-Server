@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { newTodoValidators, updateTodoValidators, retrieveTodosValidators } = require('../validators/todos');
-const { Todos, Users } = require("../db");
+const { Todos, Users, Tags } = require("../db");
 const { loginRequired } = require('../auth/helpers');
 
 router.use(loginRequired)
@@ -172,5 +172,31 @@ router.post('/:id/toggle-completed', async (req, res, next) => {
     next(err)
   }
 });
+
+router.post('/:id/tags', async (req, res, next) => {
+  const newTagName = req.body.name
+  const todoId = req.params.id
+  const userId = req.user.id
+
+  try {
+    let tag = await Tags.getTagByName(newTagName)
+    if (!tag) {
+      tag = await Tags.createTag({
+        name: newTagName,
+        owner_id: userId
+      })
+    }
+
+    await Tags.associateWithTodo([tag], todoId)
+
+    res.json({
+      payload: tag,
+      message: "Tag added",
+      error: false
+    })
+  } catch (err) {
+    next(err)
+  }
+})
 
 module.exports = router;
