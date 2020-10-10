@@ -4,8 +4,9 @@ const { newTodoValidators, updateTodoValidators, retrieveTodosValidators } = req
 const { Todos, Users } = require("../db");
 const { loginRequired } = require('../auth/helpers');
 
+router.use(loginRequired)
 
-router.get('/', loginRequired, retrieveTodosValidators, async (req, res, next) => {
+router.get('/', retrieveTodosValidators, async (req, res, next) => {
   let { user, query } = req
 
   const queryParams = {
@@ -27,7 +28,7 @@ router.get('/', loginRequired, retrieveTodosValidators, async (req, res, next) =
   }
 });
 
-router.post('/', loginRequired, newTodoValidators, async (req, res, next) => {
+router.post('/', newTodoValidators, async (req, res, next) => {
   const { body, user } = req;
   const newTodo = {
     ...body,
@@ -63,7 +64,7 @@ router.get('/byTags', async (req, res, next) => {
   }
 })
 
-router.get('/:id', loginRequired, async (req, res, next) => {
+router.get('/:id', async (req, res, next) => {
   const { id } = req.params;
   const owner_id = req.user.id
 
@@ -89,7 +90,7 @@ router.get('/:id', loginRequired, async (req, res, next) => {
   }
 });
 
-router.delete('/:id', loginRequired, async (req, res, next) => {
+router.delete('/:id', async (req, res, next) => {
   const { id } = req.params;
   const owner_id = req.user.id
 
@@ -115,7 +116,7 @@ router.delete('/:id', loginRequired, async (req, res, next) => {
   }
 });
 
-router.patch('/:id', loginRequired, updateTodoValidators, async (req, res, next) => {
+router.patch('/:id', updateTodoValidators, async (req, res, next) => {
   const { id } = req.params;
   const owner_id = req.user.id
   const todo_edits = req.body
@@ -142,7 +143,7 @@ router.patch('/:id', loginRequired, updateTodoValidators, async (req, res, next)
   }
 });
 
-router.post('/:id/toggle-completed', loginRequired, async (req, res, next) => {
+router.post('/:id/toggle-completed', async (req, res, next) => {
   const { id } = req.params;
   const owner_id = req.user.id
 
