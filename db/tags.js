@@ -1,4 +1,4 @@
-const { db, helpers } = require("./pgp");
+const { db, helpers, recordNotFound } = require("./pgp");
 
 const createTag = (newTag) => {
   return db.one(
@@ -65,6 +65,28 @@ const associateWithTodo = (tags, todoId) => {
   return db.none(query)
 }
 
+const disassociateFromTodo = async (todoId, tagName, ownerId) => {
+  const SQL = `
+    DELETE FROM todos_tags
+    WHERE 
+      todo_id = (SELECT id FROM todos WHERE id = $/todoId/ AND owner_id = $/ownerId/)
+        AND
+      tag_id = (SELECT id FROM tags WHERE name = $/tagName/)
+      RETURNING *
+  `
+
+  try {
+    const removedTag = await db.one(SQL, { todoId, tagName, ownerId })
+    return removedTag
+  } catch (err) {
+    if (recordNotFound(err)) {
+      return false
+    }
+    throw (err)
+  }
+
+}
+
 module.exports = {
   createTag,
   getTagsByName,
@@ -72,5 +94,6 @@ module.exports = {
   getByType,
   associateWithJournalEntry,
   associateWithTodo,
+  disassociateFromTodo,
   createMultiple
 };

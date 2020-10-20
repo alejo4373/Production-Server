@@ -199,4 +199,29 @@ router.post('/:id/tags', async (req, res, next) => {
   }
 })
 
+router.delete('/:id/tags/:tagName', async (req, res, next) => {
+  const todoId = req.params.id
+  const { tagName } = req.params
+  const userId = req.user.id
+
+  try {
+    let removedTag = await Tags.disassociateFromTodo(todoId, tagName, userId)
+    if (removedTag) {
+      return res.json({
+        payload: { removedTag },
+        message: `Tag \`${tagName}\` removed from todo`,
+        error: false
+      })
+    }
+
+    res.status(404).json({
+      payload: null,
+      message: "Todo or Tag not found",
+      error: true
+    })
+  } catch (err) {
+    next(err)
+  }
+})
+
 module.exports = router;
