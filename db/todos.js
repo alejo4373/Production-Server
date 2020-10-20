@@ -41,7 +41,7 @@ const getAllTodos = async (queryParams) => {
   return todos
 }
 
-const getTodo = async (id, owner_id) => {
+const getTodoWithTags = async (id, owner_id) => {
   let todo;
   const SQL = `
     SELECT 
@@ -168,7 +168,7 @@ const updateTodo = async (id, owner_id, todoEdits) => {
 
 const toggleCompleted = async (id, owner_id) => {
   try {
-    const todo = await getTodo(id, owner_id);
+    const todo = await getTodoWithTags(id, owner_id);
 
     if (!todo) return null
 
@@ -192,10 +192,22 @@ const toggleCompleted = async (id, owner_id) => {
   }
 }
 
+const getTodo = async (todoId, ownerId) => {
+  const SQL = 'SELECT * FROM todos WHERE id = $/todoId/ AND owner_id = $/ownerId/'
+  try {
+    const todo = await db.one(SQL, { todoId, ownerId })
+    return todo
+  } catch (err) {
+    if (recordNotFound(err)) return null
+    throw (err)
+  }
+}
+
 module.exports = {
   getAllTodos,
-  getTodosByTags,
   getTodo,
+  getTodosByTags,
+  getTodoWithTags,
   createTodo,
   removeTodo,
   updateTodo,

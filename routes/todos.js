@@ -69,7 +69,7 @@ router.get('/:id', async (req, res, next) => {
   const owner_id = req.user.id
 
   try {
-    const todo = await Todos.getTodo(id, owner_id);
+    const todo = await Todos.getTodoWithTags(id, owner_id);
     if (todo) {
       return res.json({
         payload: {
