@@ -179,6 +179,16 @@ router.post('/:id/tags', async (req, res, next) => {
   const userId = req.user.id
 
   try {
+    const todo = await Todos.getTodo(todoId, userId)
+
+    if (!todo) {
+      return res.status(404).json({
+        payload: null,
+        message: "Todo not found",
+        error: true
+      })
+    }
+
     let tag = await Tags.getTagByName(newTagName)
     if (!tag) {
       tag = await Tags.createTag({
@@ -194,6 +204,7 @@ router.post('/:id/tags', async (req, res, next) => {
       message: "Tag added",
       error: false
     })
+
   } catch (err) {
     next(err)
   }
