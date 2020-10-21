@@ -56,6 +56,7 @@ const getTodoWithTags = async (id, owner_id) => {
 
   try {
     todo = await db.one(SQL, { id, owner_id });
+    if (todo.tags[0] === null) todo.tags = [];
     return todo;
   } catch (err) {
     if (recordNotFound(err) || invalidInteger(err)) {
