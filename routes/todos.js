@@ -219,7 +219,12 @@ router.delete('/:id/tags/:tagName', async (req, res, next) => {
     let removedTag = await Tags.disassociateFromTodo(todoId, tagName, userId)
     if (removedTag) {
       return res.json({
-        payload: { removedTag },
+        payload: {
+          removedTag: {
+            ...removedTag,
+            name: tagName
+          }
+        },
         message: `Tag \`${tagName}\` removed from todo`,
         error: false
       })
