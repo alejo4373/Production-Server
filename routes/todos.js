@@ -200,8 +200,10 @@ router.post('/:id/tags', async (req, res, next) => {
     await Tags.associateWithTodo([tag], todoId)
 
     res.json({
-      payload: tag,
-      message: "Tag added",
+      payload: {
+        addedTag: tag
+      },
+      message: `Tag \`${tag.name}\` added to todo`,
       error: false
     })
 
