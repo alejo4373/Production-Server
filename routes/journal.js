@@ -4,7 +4,9 @@ const { Journal } = require("../db")
 const { loginRequired } = require("../auth/helpers");
 const { getEntriesValidators } = require('../validators/journal');
 
-router.post('/entries', loginRequired, async (req, res, next) => {
+router.use(loginRequired)
+
+router.post('/entries', async (req, res, next) => {
   const newEntry = {
     ...req.body,
     owner_id: req.user.id
@@ -21,7 +23,7 @@ router.post('/entries', loginRequired, async (req, res, next) => {
   }
 })
 
-router.get('/entries', loginRequired, getEntriesValidators, async (req, res, next) => {
+router.get('/entries', getEntriesValidators, async (req, res, next) => {
   const params = {
     owner_id: req.user.id,
     ...req.query
