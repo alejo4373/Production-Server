@@ -39,4 +39,33 @@ router.get('/entries', getEntriesValidators, async (req, res, next) => {
   }
 })
 
+router.patch('/entries/:id', async (req, res, next) => {
+  const owner_id = req.user.id
+  const id = req.params.id
+  const updates = {
+    ...req.body,
+  }
+
+  try {
+    const updatedEntry = await Journal.updateEntry(id, owner_id, updates);
+
+    if (!updatedEntry) {
+      return res.status(404).json({
+        payload: null,
+        message: 'Journal Entry not found',
+        error: true
+      })
+    }
+
+    res.json({
+      payload: {
+        updatedEntry
+      },
+      error: false
+    })
+  } catch (err) {
+    next(err);
+  }
+})
+
 module.exports = router;

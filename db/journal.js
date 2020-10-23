@@ -1,4 +1,4 @@
-const { db } = require("./pgp");
+const { db, recordNotFound } = require("./pgp");
 const Tags = require('./tags')
 
 const addEntry = async (entry) => {
@@ -47,13 +47,24 @@ const getEntries = async (params) => {
     GROUP BY(je.id)
     ORDER BY(je.ts) DESC
   `
+  console.log(SQL)
   return db.any(SQL, {
     ...params,
     client_tz
   })
 };
 
+const updateEntry = (id, owner_id, updates) => {
+  const SQL = `
+    UPDATE journal_entries SET text = $/text/
+      WHERE id = $/id/ AND owner_id = $/owner_id/
+    RETURNING * 
+  `
+  return db.oneOrNone(SQL, { id, owner_id, ...updates })
+}
+
 module.exports = {
   addEntry,
   getEntries,
+  updateEntry
 };
