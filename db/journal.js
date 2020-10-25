@@ -47,7 +47,6 @@ const getEntries = async (params) => {
     GROUP BY(je.id)
     ORDER BY(je.ts) DESC
   `
-  console.log(SQL)
   return db.any(SQL, {
     ...params,
     client_tz
