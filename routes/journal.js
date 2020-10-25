@@ -39,6 +39,32 @@ router.get('/entries', getEntriesValidators, async (req, res, next) => {
   }
 })
 
+router.get('/entries/:id', async (req, res, next) => {
+  const owner_id = req.user.id
+  const id = req.params.id
+
+  try {
+    const journalEntry = await Journal.getEntry(id, owner_id);
+
+    if (!journalEntry) {
+      return res.status(404).json({
+        payload: null,
+        message: 'Journal Entry not found',
+        error: true
+      })
+    }
+
+    res.json({
+      payload: {
+        entry: journalEntry
+      },
+      error: false
+    })
+  } catch (err) {
+    next(err);
+  }
+})
+
 router.patch('/entries/:id', async (req, res, next) => {
   const owner_id = req.user.id
   const id = req.params.id

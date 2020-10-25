@@ -53,6 +53,23 @@ const getEntries = async (params) => {
   })
 };
 
+const getEntry = async (id, owner_id) => {
+  const SQL = `
+    SELECT
+      je.id,
+      je.text,
+      je.ts,
+      ARRAY_AGG(tags.name) AS tags
+    FROM journal_entries AS je
+      JOIN je_tags ON je_tags.je_id = je.id
+      JOIN tags ON je_tags.tag_id = tags.id
+    WHERE je.owner_id = $/owner_id/ AND je.id = $/id/
+    GROUP BY(je.id)
+    ORDER BY(je.ts) DESC
+  `
+  return db.oneOrNone(SQL, { id, owner_id })
+};
+
 const updateEntry = (id, owner_id, updates) => {
   const SQL = `
     UPDATE journal_entries SET text = $/text/
@@ -65,5 +82,6 @@ const updateEntry = (id, owner_id, updates) => {
 module.exports = {
   addEntry,
   getEntries,
-  updateEntry
+  updateEntry,
+  getEntry
 };
