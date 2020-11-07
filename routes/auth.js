@@ -1,12 +1,12 @@
 let express = require('express');
 let router = express.Router();
 const passport = require('../auth/passport');
-const { genPasswordDigest, loginRequired } = require('../auth/helpers');
+const { genPasswordDigest, loginRequired, verifyCaptchaToken } = require('../auth/helpers');
 const { loginValidators, signupValidators } = require('../validators/auth');
 
 let { Users } = require('../db');
 
-router.post("/signup", signupValidators, async (req, res, next) => {
+router.post("/signup", signupValidators, verifyCaptchaToken, async (req, res, next) => {
   const { username, password, email } = req.body;
   try {
     let user = {
@@ -47,7 +47,7 @@ router.post("/signup", signupValidators, async (req, res, next) => {
   }
 })
 
-router.post("/login", loginValidators, (req, res, next) => {
+router.post("/login", loginValidators, verifyCaptchaToken, (req, res, next) => {
   passport.authenticate('local', (err, user, info) => {
     if (err) return next(err)
     if (!user) {

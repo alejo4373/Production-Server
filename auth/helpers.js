@@ -1,4 +1,5 @@
 const bcrypt = require('bcrypt');
+const axios = require('axios')
 
 const genPasswordDigest = async (plainPassword) => {
   try {
@@ -7,6 +8,22 @@ const genPasswordDigest = async (plainPassword) => {
   }
   catch (err) {
     throw (err)
+  }
+}
+
+const verifyCaptchaToken = async (req, res, next) => {
+  const secret = process.env.RECAPTCHA_SECRET
+  const token = req.body.recaptchaToken
+  try {
+    const URL = `https://www.google.com/recaptcha/api/siteverify?secret=${secret}&response=${token}`
+    const { data } = await axios.post(URL)
+    if (data.success) {
+      next()
+    } else {
+      next(err)
+    }
+  } catch (err) {
+    next(err)
   }
 }
 
@@ -27,5 +44,6 @@ const loginRequired = (req, res, next) => {
 module.exports = {
   genPasswordDigest,
   comparePasswords,
-  loginRequired
+  loginRequired,
+  verifyCaptchaToken
 }
