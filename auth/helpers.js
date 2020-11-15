@@ -17,7 +17,6 @@ const verifyCaptchaToken = async (req, res, next) => {
   try {
     const URL = `https://www.google.com/recaptcha/api/siteverify?secret=${secret}&response=${token}`
     const { data } = await axios.post(URL)
-    console.log('captcha validation:', data);
     if (data.success) {
       next()
     } else {
