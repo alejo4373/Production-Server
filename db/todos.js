@@ -98,6 +98,10 @@ const createTodo = async (todo) => {
     RETURNING *`, todo
     )
 
+    if (!todo.tags || !todo.tags.length) {
+      todo.tags = ['untagged']
+    }
+
     const existingTags = await Tags.getTagsByName(todo.tags)
 
     // A better approach for this might be to have tags be unique 
