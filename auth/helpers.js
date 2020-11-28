@@ -12,6 +12,10 @@ const genPasswordDigest = async (plainPassword) => {
 }
 
 const verifyCaptchaToken = async (req, res, next) => {
+  if (process.env.NODE_ENV !== 'production') {
+    return next()
+  }
+
   const secret = process.env.RECAPTCHA_SECRET
   const token = req.body.recaptchaToken
   try {
