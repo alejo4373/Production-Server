@@ -17,6 +17,8 @@ const getAllTodos = async (queryParams) => {
     let columnName = pgpAs.name(param)
     if (timeParams.has(param)) {
       return `(todos.${columnName} AT TIME ZONE $/client_tz/)::Date = $/${param}/` // Type cast to SQL Date AT TIME ZONE to discard time
+    } if (param === 'text') {
+      return `todos.text_searchable @@ plainto_tsquery($/${param}/)`
     } else {
       return `todos.${columnName} = $/${param}/`
     }
@@ -208,20 +210,6 @@ const getTodo = async (todoId, ownerId) => {
   }
 }
 
-const search = async (text, ownerId) => {
-  const SQL = `
-    SELECT * FROM todos
-    WHERE owner_id = $/ownerId/ AND text_searchable @@ plainto_tsquery($/text/)  
-  `
-  console.log(pgpAs.format(SQL, { ownerId, text }))
-  try {
-    const results = await db.any(SQL, { ownerId, text })
-    return results
-  } catch (err) {
-    throw (err)
-  }
-}
-
 module.exports = {
   getAllTodos,
   getTodo,
@@ -230,6 +218,5 @@ module.exports = {
   createTodo,
   removeTodo,
   updateTodo,
-  toggleCompleted,
-  search
+  toggleCompleted
 };

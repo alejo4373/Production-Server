@@ -64,20 +64,6 @@ router.get('/byTags', async (req, res, next) => {
   }
 })
 
-router.get('/search', async (req, res, next) => {
-  const { query, user } = req
-  try {
-    let results = await Todos.search(query.text, user.id)
-    res.json({
-      payload: { results },
-      message: `Todos that match search '${query.text}'`,
-      error: false
-    })
-  } catch (err) {
-    next(err)
-  }
-})
-
 router.get('/:id', async (req, res, next) => {
   const { id } = req.params;
   const owner_id = req.user.id
