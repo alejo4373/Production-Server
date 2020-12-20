@@ -208,6 +208,20 @@ const getTodo = async (todoId, ownerId) => {
   }
 }
 
+const search = async (text, ownerId) => {
+  const SQL = `
+    SELECT * FROM todos
+    WHERE owner_id = $/ownerId/ AND text_searchable @@ plainto_tsquery($/text/)  
+  `
+  console.log(pgpAs.format(SQL, { ownerId, text }))
+  try {
+    const results = await db.any(SQL, { ownerId, text })
+    return results
+  } catch (err) {
+    throw (err)
+  }
+}
+
 module.exports = {
   getAllTodos,
   getTodo,
@@ -216,5 +230,6 @@ module.exports = {
   createTodo,
   removeTodo,
   updateTodo,
-  toggleCompleted
+  toggleCompleted,
+  search
 };
