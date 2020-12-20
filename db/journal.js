@@ -1,4 +1,4 @@
-const { db, recordNotFound } = require("./pgp");
+const { db, recordNotFound, pgpAs } = require("./pgp");
 const Tags = require('./tags')
 
 const addEntry = async (entry) => {
@@ -31,24 +31,37 @@ const addEntry = async (entry) => {
   }
 }
 
-const getEntries = async (params) => {
-  const client_tz = params.client_tz || "UTC"
+const getEntries = async (queryParams) => {
+  const client_tz = queryParams.client_tz || "UTC"
+  delete queryParams.client_tz
+
+  const params = Object.keys(queryParams)
+
+  const whereConditions = params.map(param => {
+    const columnName = pgpAs.name(param)
+    if (param === 'date') {
+      return `(je.ts AT TIME ZONE $/client_tz/)::Date = $/date/`
+    } else if (param === 'text') {
+      return `je.text_searchable @@ plainto_tsquery($/text/)`
+    } else {
+      return `je.${columnName} = $/${param}/`
+    }
+  })
 
   const SQL = `
     SELECT 
-      je.id, 
-      je.text, 
-      je.ts, 
+      je.*,
       ARRAY_AGG(tags.name) AS tags
     FROM journal_entries AS je
       JOIN je_tags ON je_tags.je_id = je.id
       JOIN tags ON je_tags.tag_id = tags.id
-    WHERE je.owner_id = $/owner_id/ ${params.date ? "AND (je.ts AT TIME ZONE $/client_tz/)::Date = $/date/" : ""}
+    WHERE ${whereConditions.join(' AND ')}
     GROUP BY(je.id)
     ORDER BY(je.ts) DESC
   `
+
   return db.any(SQL, {
-    ...params,
+    ...queryParams,
     client_tz
   })
 };
