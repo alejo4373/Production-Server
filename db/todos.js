@@ -151,7 +151,10 @@ const removeTodo = async (id, owner_id) => {
 const updateTodo = async (id, owner_id, todoEdits) => {
   const columnSet = new helpers.ColumnSet([
     optionalCol("text"),
-    optionalCol("value")
+    optionalCol("value"),
+    optionalCol('completed'),
+    optionalCol('completed_at'),
+    optionalCol('due_at')
   ])
 
   const updateQuery = `

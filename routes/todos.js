@@ -116,6 +116,8 @@ router.delete('/:id', async (req, res, next) => {
   }
 });
 
+// Updating completed = true through this PATCH does not evaluate or 
+// award the user any points
 router.patch('/:id', updateTodoValidators, async (req, res, next) => {
   const { id } = req.params;
   const owner_id = req.user.id

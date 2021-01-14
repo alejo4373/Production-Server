@@ -13,12 +13,12 @@ const newTodoValidators = withValidationErrorHandler([
 
 const updateTodoValidators = withValidationErrorHandler([
   oneOf([
-    body('text').exists().withMessage('not specified'),
-    body('value').exists().withMessage('not specified'),
-  ]),
-
-  body('text').optional().trim().notEmpty().withMessage('cannot be empty'),
-  body('value').optional().isInt({ min: 1 }).withMessage('must be a valid positive number'),
+    body('completed_at').isISO8601().withMessage('completed_at must be a ISO8601 date string'),
+    body('completed').isBoolean().withMessage('completed must be true or false'),
+    body('due_at').isISO8601().withMessage('due_at must be a ISO8601 date string'),
+    body('text').trim().notEmpty().withMessage('cannot be empty'),
+    body('value').isInt({ min: 1 }).withMessage('must be a valid positive number')
+  ])
 ])
 
 const retrieveTodosValidators = withValidationErrorHandler([
