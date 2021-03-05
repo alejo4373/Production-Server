@@ -29,7 +29,8 @@
     "morgan": "~1.9.0",
     "passport": "^0.4.0",
     "passport-local": "^1.0.0",
-    "pg-promise": "^10.5.6"
+    "pg-promise": "^10.5.6",
+    "sanitize-html": "^2.3.2"
   },
   "devDependencies": {
     "jest": "^26.4.1",

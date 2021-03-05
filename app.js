@@ -6,6 +6,7 @@ var logger = require('morgan');
 var session = require('express-session');
 var passport = require('./auth/passport');
 var pgSession = require('connect-pg-simple')(session);
+var htmlTextSanitizer = require('./middleware/htmlTextSanitizer')
 var { db } = require('./db/pgp')
 
 var authRouter = require('./routes/auth');
@@ -41,6 +42,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, 'client/build')));
+app.use(htmlTextSanitizer())
 
 app.use('/api/auth', authRouter);
 app.use('/api/todos', todosRouter);
