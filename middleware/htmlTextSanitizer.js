@@ -1,8 +1,8 @@
-const sanitizeHtml = require('sanitize-html')
+const xss = require('xss')
 
 const htmlTextSanitizer = () => (req, res, next) => {
   if (req.body && req.body.text) {
-    req.body.text = sanitizeHtml(req.body.text, { disallowedTagsMode: 'scape' })
+    req.body.text = xss(req.body.text)
   }
   next()
 }
