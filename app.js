@@ -13,6 +13,7 @@ var authRouter = require('./routes/auth');
 var todosRouter = require('./routes/todos');
 var journalRouter = require('./routes/journal');
 var tagsRouter = require('./routes/tags');
+var listsRouter = require('./routes/lists');
 
 var app = express();
 
@@ -48,6 +49,7 @@ app.use('/api/auth', authRouter);
 app.use('/api/todos', todosRouter);
 app.use('/api/journal', journalRouter);
 app.use('/api/tags', tagsRouter);
+app.use('/api/lists', listsRouter);
 
 app.use('*', (req, res, next) => {
   res.sendFile(path.resolve('client/build/index.html'))
