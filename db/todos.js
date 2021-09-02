@@ -95,10 +95,12 @@ const getTodosByTags = async (tags) => {
 
 const createTodo = async (todo) => {
   try {
-    const newTodo = await db.one(
-      `INSERT INTO todos(owner_id, text, value) VALUES($/owner_id/, $/text/, $/value/) 
-    RETURNING *`, todo
-    )
+    const SQL = `
+      INSERT INTO todos(owner_id, text, value, list_id)
+        VALUES($/owner_id/, $/text/, $/value/, $/list_id/)
+      RETURNING *
+    `
+    const newTodo = await db.one(SQL, todo)
 
     if (!todo.tags || !todo.tags.length) {
       todo.tags = ['untagged']
