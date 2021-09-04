@@ -96,8 +96,8 @@ const getTodosByTags = async (tags) => {
 const createTodo = async (todo) => {
   try {
     const SQL = `
-      INSERT INTO todos(owner_id, text, value, list_id)
-        VALUES($/owner_id/, $/text/, $/value/, $/list_id/)
+      INSERT INTO todos(owner_id, text, value ${todo.list_id ? ', list_id' : ''})
+        VALUES($/owner_id/, $/text/, $/value/ ${todo.list_id ? ', $/list_id/' : ''})
       RETURNING *
     `
     const newTodo = await db.one(SQL, todo)

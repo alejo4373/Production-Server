@@ -12,7 +12,7 @@ router.post('/', loginRequired, async (req, res, next) => {
   try {
     const listCreated = await Lists.createList(newList);
     res.json({
-      payload: listCreated,
+      payload: { list: listCreated },
       error: false
     })
   } catch (err) {
@@ -24,9 +24,9 @@ router.get('/', loginRequired, async (req, res, next) => {
   const ownerId = req.user.id
 
   try {
-    const tags = await Lists.getAll(ownerId);
+    const lists = await Lists.getAll(ownerId);
     res.json({
-      payload: tags,
+      payload: { lists },
       error: false
     })
   } catch (err) {
