@@ -6,7 +6,7 @@
     "start": "node ./bin/www",
     "start:dev": "nodemon ./bin/www",
     "heroku-prebuild": "cd client && yarn install && yarn build",
-    "heroku-postbuild": "npm run dbm:up",
+    "heroku-postbuild": "yarn dbm:up",
     "dbm:create": "db-migrate create --migrations-dir ./db/migrations",
     "dbm:up": "db-migrate up --migrations-dir ./db/migrations",
     "dbm:down": "db-migrate down --migrations-dir ./db/migrations",
