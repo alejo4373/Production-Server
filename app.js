@@ -41,8 +41,14 @@ app.use(session({
 app.use(cookieParser("new york city"));
 app.use(passport.initialize());
 app.use(passport.session());
-app.use(express.static(path.join(__dirname, 'public')));
-app.use(express.static(path.join(__dirname, 'client/build')));
+
+// Static assets are served by the aws beanstalk proxy server and are configured
+// on the file .ebextensions/staticfiles.config 
+// See https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/create_deploy_nodejs_express.html
+//
+// app.use(express.static(path.join(__dirname, 'public')));
+// app.use(express.static(path.join(__dirname, 'client/build')));
+
 app.use(htmlTextSanitizer())
 
 app.use('/api/auth', authRouter);
