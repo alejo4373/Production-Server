@@ -11,7 +11,6 @@ Express server for the management of Todos and Journal Entries for my personal p
 5. `npm start`
 
 ### Environment Variables
-* `DATABASE_URL` pointing to an instance of Postgres running
 * `SESSION_SECRET` a string for the signing of cookies
 
 ## Deployment

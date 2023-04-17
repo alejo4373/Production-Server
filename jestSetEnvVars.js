@@ -6,7 +6,6 @@
 * by @alejo4373 
 */
 const jestSetEnvVars = () => {
-  process.env.DATABASE_URL = "postgres://localhost:5432/production_test_db" // Set test database url
   process.env.SESSION_SECRET = "A_SUPER_SECRET"
 }
 

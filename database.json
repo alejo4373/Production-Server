@@ -1,4 +1,5 @@
 {
+  "defaultEnv": { "ENV": "NODE_ENV" },
   "dev": {
     "driver": "pg",
     "user": {
@@ -7,6 +8,23 @@
     "password": "",
     "host": "localhost",
     "database": "production_dev_db",
+    "schema": "public"
+  },
+  "test": {
+    "driver": "pg",
+    "user": "postgres",
+    "password": "",
+    "host": "localhost",
+    "database": "production_test_db",
+    "schema": "public"
+  },
+  "production": {
+    "driver": "pg",
+    "user": { "ENV": "RDS_USERNAME" },
+    "password": { "ENV": "RDS_PASSWORD" },
+    "host": { "ENV": "RDS_HOSTNAME" },
+    "port": { "ENV": "RDS_PORT" },
+    "database": { "ENV": "RDS_DB_NAME" },
     "schema": "public"
   },
   "sql-file": true

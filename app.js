@@ -43,11 +43,11 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 // Static assets are served by the aws beanstalk proxy server and are configured
-// on the file .ebextensions/staticfiles.config 
+// on the file .ebextensions/staticfiles.config for production
 // See https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/create_deploy_nodejs_express.html
-//
-// app.use(express.static(path.join(__dirname, 'public')));
-// app.use(express.static(path.join(__dirname, 'client/build')));
+if (process.env.NODE_ENV !== 'production') {
+  app.use(express.static(path.join(__dirname, 'client/build')));
+}
 
 app.use(htmlTextSanitizer())
 

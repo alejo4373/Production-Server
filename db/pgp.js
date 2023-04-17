@@ -1,7 +1,9 @@
-const pgPromise = require('pg-promise');
+const { getDatabaseUrl } = require('./utils/getDatabaseUrl');
 
 const pgp = require('pg-promise')();
-const db = pgp(process.env.DATABASE_URL)
+
+const databaseUrl = getDatabaseUrl()
+const db = pgp(databaseUrl)
 
 const recordNotFound = (err) => {
   return err instanceof pgp.errors.QueryResultError && err.code === pgp.errors.queryResultErrorCode.noData
