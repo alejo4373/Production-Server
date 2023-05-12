@@ -11,11 +11,17 @@ Express server for the management of Todos and Journal Entries for my personal p
 5. `npm start`
 
 ### Environment Variables
-* `SESSION_SECRET` a string for the signing of cookies
+
+- `SESSION_SECRET` a string for the signing of cookies
 
 ## Deployment
 
-This app is deployed to Heroku. The following environment variables must be available
+This app is deployed to AWS Elasticbeanstak. To deploy this app one must
+
+1. `eb init` being in the root directory of the app
+2. `eb create` to create an elastic beanstalk environment.
+   - Follow the steps in the prompt
+   - This will zip the application code and provision de db as per `.ebextensions/db-instance-options.config`
 
 ```sh
 DATABASE_URL
