@@ -1,15 +1,13 @@
 #!/bin/bash
 
-curl https://get.volta.sh | bash
+# This is a platform hook. See
+# https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/platforms-linux-extend.html
 
-# Install node
-# EB installs node version specified in "engines" in package.json
-# volta install node@16.14.0
-printf "af-debug\n" 
-volta --version
+# Pull yarn version to install from engines.yarn in package.json
+yarnVersion=$(jq '.engines.yarn' package.json -r)
 
 # Install yarn
-volta install yarn@1.22.10
+npm install yarn@$yarnVersion -g
 
 # install deps
 cd /var/app/staging && yarn
