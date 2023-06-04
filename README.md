@@ -25,10 +25,14 @@ This app is deployed to AWS Elasticbeanstak. To deploy this app one must
    - This will provision a db (hence `--database`). The DB would be provisioned with the settings specified in `.ebextensions/db-instance-options.config`
      - Follow the prompts to set a username and password for the db. Remember those
 3. Set needed environment variables
+
+   - `REACT_APP_RECAPTCHA_SITE_KEY` is used by React at build time and injected in the client code. The client react app is built by `.platform/hooks/predeploy/01_build-client.sh` when deploying
+
    ```
    eb setenv \
    SESSION_SECRET=<A_SESSION_SECRET_STRING> \
-   RECAPTCHA_SECRET=<RECAPTCHA_SECRET_KEY>
+   RECAPTCHA_SECRET=<RECAPTCHA_SECRET_KEY> \
+   REACT_APP_RECAPTCHA_SITE_KEY=<ECAPTCHA_SITE_KEY>
    ```
 
 ### Connecting to the database for inspection, restoration or dump

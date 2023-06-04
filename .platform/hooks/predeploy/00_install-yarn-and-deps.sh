@@ -9,5 +9,8 @@ yarnVersion=$(jq '.engines.yarn' package.json -r)
 # Install yarn
 npm install yarn@$yarnVersion -g
 
+# Needed bacause yarn is not added automatically to the PATH
+env PATH="$PATH:$NODE_HOME/bin"
+
 # install deps
 cd /var/app/staging && yarn
