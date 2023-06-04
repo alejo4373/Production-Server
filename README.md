@@ -32,7 +32,7 @@ This app is deployed to AWS Elasticbeanstak. To deploy this app one must
    eb setenv \
    SESSION_SECRET=<A_SESSION_SECRET_STRING> \
    RECAPTCHA_SECRET=<RECAPTCHA_SECRET_KEY> \
-   REACT_APP_RECAPTCHA_SITE_KEY=<ECAPTCHA_SITE_KEY>
+   REACT_APP_RECAPTCHA_SITE_KEY=<RECAPTCHA_SITE_KEY>
    ```
 
 ### Connecting to the database for inspection, restoration or dump
@@ -48,7 +48,12 @@ The database does not offer direct access, as such one needs to "Set up EC2 conn
 
    For more details see https://repost.aws/knowledge-center/rds-connect-ec2-bastion-host
 
-3. Then locally `psql postgresql://RDS_USERNAME:RDS_PASSWORD@localhost:5432/DB_NAME`
+   - `LOCAL_PORT` AND `REMOTE_PORT` is usually 5432
+   - `RDS_INSTANCE_HOST` can be found in the database instance dashboard
+
+See. https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/CHAP_GettingStarted.CreatingConnecting.PostgreSQL.html
+
+3. Then locally `psql postgresql://RDS_USERNAME:RDS_PASSWORD@localhost:5432/DB_NAME` or `psql --host=localhost --username=ebroot --dbname=ebdb`
 
 ## Debugging tips
 
