@@ -46,14 +46,31 @@ The database does not offer direct access, as such one needs to "Set up EC2 conn
    ssh -i SSH_KEY -L LOCAL_PORT:RDS_INSTANCE_HOST.AWS_REGION.rds.amazonaws.com:REMOTE_PORT ec2-user@EC2_HOST`
    ```
 
-   For more details see https://repost.aws/knowledge-center/rds-connect-ec2-bastion-host
-
    - `LOCAL_PORT` AND `REMOTE_PORT` is usually 5432
    - `RDS_INSTANCE_HOST` can be found in the database instance dashboard
 
-See. https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/CHAP_GettingStarted.CreatingConnecting.PostgreSQL.html
+   For more details see:
+
+   - https://repost.aws/knowledge-center/rds-connect-ec2-bastion-host
+   - Or https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/CHAP_GettingStarted.CreatingConnecting.PostgreSQL.html
 
 3. Then locally `psql postgresql://RDS_USERNAME:RDS_PASSWORD@localhost:5432/DB_NAME` or `psql --host=localhost --username=ebroot --dbname=ebdb`
+
+   3.1 If restoring the database from a dump, append `-f DUMP_FILE.dump`
+
+## Setting up an SSL Certificate for the application to use HTTPS
+
+Setting up a ssl certificate was done by requesting a public certificate in [ACM](https://us-east-1.console.aws.amazon.com/acm/home?region=us-east-1#/certificates/list) for the domain you want to use with the application use, in my case that was `production.alejandrofran.co`
+
+The requested certificate must be verified with your DNS provider (Google domains in my case). To verify the certificate you need to add a temporary CNAME record to your dns provider with the CNAME name and CNAME value displayed in your Certificate's ACM page. This is used for aws to verify you are the owner of the domain you're requesting a cert for.
+
+This is what my certificate looks like in ACM
+![my cert on acm](./docs/assets/cert-on-acm.png)
+
+Then on my DNS I set up the following records
+![dns records showing two CNAME records one for validation and the other for actual forwarding](./docs/assets/dns-validation.png)
+
+The last step outlined in pink is to add one last CNAME for your actual domain/subdomain (production.alejandrofran.co in my case) to point to the load balancer (in my case `code-server-load-balancer...`)
 
 ## Debugging tips
 
@@ -61,3 +78,7 @@ See. https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/CHAP_GettingStarted.
 - `journalctl -xe` shows all logs including logs from from the application
 - `journalctl -xe -u nginx`
 - `/var/app/current` location of the app in the ec2 instance
+
+## Todo
+
+- [ ] Setup db migrations to trigger on deploy
