@@ -57,7 +57,7 @@ app.use('/api/journal', journalRouter);
 app.use('/api/tags', tagsRouter);
 app.use('/api/lists', listsRouter);
 
-app.use('/livez', (req, res) => {
+app.use('/api/livez', (req, res) => {
   res.status(200)
   res.send('live')
 });
